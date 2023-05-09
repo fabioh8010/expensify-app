@@ -61,8 +61,8 @@ class ImageWithSizeCalculation extends PureComponent {
 
     imageLoadedSuccessfully(event) {
         this.props.onMeasure({
-            width: event.nativeEvent.width,
-            height: event.nativeEvent.height,
+            width: event.source.width,
+            height: event.source.height,
         });
     }
 

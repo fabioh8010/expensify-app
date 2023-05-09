@@ -1,7 +1,7 @@
 import React from 'react';
-import RNFastImage from 'react-native-fast-image';
 import {withOnyx} from 'react-native-onyx';
 import lodashGet from 'lodash/get';
+import {Image as ExpoImage} from 'expo-image';
 import CONST from '../../CONST';
 import ONYXKEYS from '../../ONYXKEYS';
 import {defaultProps, imagePropTypes} from './imagePropTypes';
@@ -25,7 +25,7 @@ const Image = (props) => {
     }
 
     // eslint-disable-next-line react/jsx-props-no-spreading
-    return <RNFastImage {...rest} source={imageSource} />;
+    return <ExpoImage {...rest} source={imageSource} />;
 };
 
 Image.propTypes = imagePropTypes;

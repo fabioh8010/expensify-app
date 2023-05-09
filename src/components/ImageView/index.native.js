@@ -101,24 +101,30 @@ class ImageView extends PureComponent {
      *
      * @param {Object} nativeEvent
      */
-    configureImageZoom({nativeEvent}) {
+    configureImageZoom({source}) {
         // Wait till animations are over to prevent stutter in navigation animation
         this.state.interactionPromise = InteractionManager.runAfterInteractions(() => {
-            let imageWidth = nativeEvent.width;
-            let imageHeight = nativeEvent.height;
-            const containerWidth = Math.round(this.props.windowWidth);
-            const containerHeight = Math.round(this.state.containerHeight ? this.state.containerHeight : this.props.windowHeight);
+            const imageWidth = source.width;
+            const imageHeight = source.height;
 
-            const aspectRatio = Math.min(containerHeight / imageHeight, containerWidth / imageWidth);
+            // const containerWidth = Math.round(this.props.windowWidth);
+            // const containerHeight = Math.round(this.state.containerHeight ? this.state.containerHeight : this.props.windowHeight);
 
-            imageHeight *= aspectRatio;
-            imageWidth *= aspectRatio;
+            // const aspectRatio = Math.min(containerHeight / imageHeight, containerWidth / imageWidth);
 
-            // Resize the image to max dimensions possible on the Native platforms to prevent crashes on Android. To keep the same behavior, apply to IOS as well.
-            const maxDimensionsScale = 11;
-            imageWidth = Math.min(imageWidth, (containerWidth * maxDimensionsScale));
-            imageHeight = Math.min(imageHeight, (containerHeight * maxDimensionsScale));
-            this.setState({imageHeight, imageWidth, isLoading: false});
+            // if (imageHeight > imageWidth) {
+            //     imageHeight *= aspectRatio;
+            // } else {
+            //     imageWidth *= aspectRatio;
+            // }
+
+            // // Resize the image to max dimensions possible on the Native platforms to prevent crashes on Android. To keep the same behavior, apply to IOS as well.
+            // const maxDimensionsScale = 11;
+            // imageWidth = Math.min(imageWidth, (containerWidth * maxDimensionsScale));
+            // imageHeight = Math.min(imageHeight, (containerHeight * maxDimensionsScale));
+            // console.log('imageWidth', imageWidth);
+            // console.log('imageHeight', imageHeight);
+            this.setState({imageHeight: imageWidth, imageWidth: imageHeight, isLoading: false});
         });
     }
 
@@ -221,9 +227,10 @@ class ImageView extends PureComponent {
                             disableTransformation
                             source={{uri: this.props.url}}
                             isAuthTokenRequired={this.props.isAuthTokenRequired}
-                            resizeMode={Image.resizeMode.contain}
+                            contentFit="contain"
                             onLoadStart={this.imageLoadingStart}
                             onLoad={this.configureImageZoom}
+                            onError={e => console.error(e)}
                         />
                         {/**
                          Create an invisible view on top of the image so we can capture and set the amount of touches before
