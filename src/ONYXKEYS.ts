@@ -1,7 +1,9 @@
+import {ValueOf} from 'type-fest';
+
 /**
  * This is a file containing constants for all the top level keys in our store
  */
-export default {
+const ONYXKEYS = {
     // Holds information about the users account that is logging in
     ACCOUNT: 'account',
 
@@ -230,4 +232,23 @@ export default {
 
     // Report ID of the last report the user viewed as anonymous user
     LAST_OPENED_PUBLIC_ROOM_ID: 'lastOpenedPublicRoomID',
+} as const;
+
+type OnyxKeysMap = typeof ONYXKEYS;
+
+type RegularOnyxKeys = {
+    [K in ValueOf<Omit<OnyxKeysMap, 'COLLECTION' | 'FORMS'>>]: string;
 };
+
+type CollectionOnyxKeys = {
+    [K in `${ValueOf<OnyxKeysMap['COLLECTION']>}${string}`]: string;
+};
+
+type FormsOnyxKeys = {
+    [K in ValueOf<OnyxKeysMap['FORMS']>]: string;
+};
+
+type OnyxKeys = RegularOnyxKeys & CollectionOnyxKeys & FormsOnyxKeys;
+
+export default ONYXKEYS;
+export type {OnyxKeys};

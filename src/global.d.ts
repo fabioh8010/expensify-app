@@ -1,3 +1,5 @@
+import {OnyxKeys} from './ONYXKEYS';
+
 declare module '*.png' {
     const value: import('react-native').ImageSourcePropType;
     export default value;
@@ -15,3 +17,8 @@ declare module '*.svg' {
 }
 
 declare module 'react-native-device-info/jest/react-native-device-info-mock';
+
+declare module 'react-native-onyx' {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-empty-interface
+    interface Keys extends OnyxKeys {}
+}
