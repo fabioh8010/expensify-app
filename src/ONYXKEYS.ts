@@ -250,5 +250,12 @@ type FormsOnyxKeys = {
 
 type OnyxKeys = RegularOnyxKeys & CollectionOnyxKeys & FormsOnyxKeys;
 
+// TODO: Improve typings.
+type OnyxValues = {
+    [ONYXKEYS.ACCOUNT]: {id: string; name?: string};
+    [download: `download_${string}`]: {url: string};
+    [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
+};
+
 export default ONYXKEYS;
-export type {OnyxKeys};
+export type {OnyxKeys, OnyxValues};
