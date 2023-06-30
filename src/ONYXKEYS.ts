@@ -234,28 +234,19 @@ const ONYXKEYS = {
     LAST_OPENED_PUBLIC_ROOM_ID: 'lastOpenedPublicRoomID',
 } as const;
 
+type DeepValueOf<T> = T extends object ? DeepValueOf<T[keyof T]> : T;
+
 type OnyxKeysMap = typeof ONYXKEYS;
-
-type RegularOnyxKeys = {
-    [K in ValueOf<Omit<OnyxKeysMap, 'COLLECTION' | 'FORMS'>>]: string;
-};
-
-type CollectionOnyxKeys = {
-    [K in `${ValueOf<OnyxKeysMap['COLLECTION']>}${string}`]: string;
-};
-
-type FormsOnyxKeys = {
-    [K in ValueOf<OnyxKeysMap['FORMS']>]: string;
-};
-
-type OnyxKeys = RegularOnyxKeys & CollectionOnyxKeys & FormsOnyxKeys;
+type CollectionKey = `${ValueOf<OnyxKeysMap['COLLECTION']>}${string}`;
+type OnyxKey = DeepValueOf<Omit<OnyxKeysMap, 'COLLECTION'>> | CollectionKey;
 
 // TODO: Improve typings.
 type OnyxValues = {
     [ONYXKEYS.ACCOUNT]: {id: string; name?: string};
-    [download: `download_${string}`]: {url: string};
+    [download: `${typeof ONYXKEYS.COLLECTION.DOWNLOAD}${string}`]: {url: string};
     [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
+    [ONYXKEYS.NVP_PREFERRED_LOCALE]: string;
 };
 
 export default ONYXKEYS;
-export type {OnyxKeys, OnyxValues};
+export type {OnyxKey, OnyxValues};
