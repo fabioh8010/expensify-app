@@ -42,6 +42,20 @@ function Component() {
         selector: (value) => value,
     });
 
+    Onyx.connect({
+        key: ONYXKEYS.COLLECTION.REPORT,
+        callback: (value) => {
+            if (!value) {
+                return;
+            }
+
+            console.log(value.report1.id);
+            console.log(value.report2.id);
+        },
+        waitForCollectionCallback: true,
+        selector: 'data.isRead',
+    });
+
     Onyx.disconnect(1000);
     Onyx.disconnect(1000, ONYXKEYS.COUNTRY_CODE);
     Onyx.disconnect(1000, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`);
@@ -55,21 +69,32 @@ function Component() {
         [ONYXKEYS.ACCOUNT]: {id: 'id2'},
         [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: false,
         // [ONYXKEYS.NVP_PREFERRED_LOCALE]: 1, // raises an error - correct
-        // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]: {url: 'download_url'}, // FIXME: raise errors if I add collection key - incorrect
+        [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {url: 'download_url'},
+        [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {id: 'download_url', data: {message: 'message1'}},
     });
 
     Onyx.merge(ONYXKEYS.ACCOUNT, {name: 'user name'});
     // Onyx.merge(ONYXKEYS.ACCOUNT, 'something'); // raises an error - correct
     Onyx.merge(`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`, {});
+    Onyx.merge(`${ONYXKEYS.COLLECTION.REPORT}${'report'}`, {data: {isRead: true}});
 
     Onyx.clear();
     Onyx.clear([ONYXKEYS.ACCOUNT, ONYXKEYS.ACTIVE_CLIENTS, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]);
 
     Onyx.mergeCollection(ONYXKEYS.COLLECTION.DOWNLOAD, {
-        [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]: {url: 'download_url'},
-        // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment2'}`]: false,
-        [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment3'}`]: {url: 'download_url3'},
-    }); // FIXME: raises an error - incorrect
+        [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {url: 'download_url'},
+        [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment3'}` as const]: {url: 'download_url3'},
+        // [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {id: 'account'}, // raises an error - correct
+        // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment2'}` as const]: false, // raises an error - correct
+    });
+
+    Onyx.mergeCollection(ONYXKEYS.COLLECTION.REPORT, {
+        [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
+    });
+
+    Onyx.mergeCollection(ONYXKEYS.ACCOUNT, {
+        [`${ONYXKEYS.ACCOUNT}${'report1'}` as const]: {id: 'account'},
+    }); // FIXME: it should raise an error because ONYXKEYS.ACCOUNT is not a collection.
 
     Onyx.update([
         {
@@ -92,6 +117,23 @@ function Component() {
             key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`,
             value: {url: 'url1'},
         },
+        {
+            onyxMethod: 'set',
+            key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
+            value: {id: 'id1', data: {message: 'message1'}},
+        },
+        {
+            onyxMethod: 'merge',
+            key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
+            value: {data: {isRead: true}},
+        },
+        {
+            onyxMethod: 'mergeCollection',
+            key: ONYXKEYS.COLLECTION.REPORT,
+            value: {
+                [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}}, // FIXME: not working
+            },
+        },
     ]);
 
     Onyx.init({
@@ -99,7 +141,7 @@ function Component() {
         initialKeyStates: {
             [ONYXKEYS.ACCOUNT]: {id: 'id1'},
             [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: false,
-            // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]: {url: 'download_url'}, // FIXME: raise errors if I add collection key - incorrect
+            [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {url: 'download_url'},
         },
         safeEvictionKeys: [ONYXKEYS.ACCOUNT],
     });

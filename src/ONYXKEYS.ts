@@ -244,6 +244,7 @@ type OnyxKey = DeepValueOf<Omit<OnyxKeysMap, 'COLLECTION'>> | CollectionKey;
 type OnyxValues = {
     [ONYXKEYS.ACCOUNT]: {id: string; name?: string};
     [download: `${typeof ONYXKEYS.COLLECTION.DOWNLOAD}${string}`]: {url: string};
+    [report: `${typeof ONYXKEYS.COLLECTION.REPORT}${string}`]: {id: string; data: {message: string; isRead?: boolean}};
     [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
     [ONYXKEYS.NVP_PREFERRED_LOCALE]: string;
 };
