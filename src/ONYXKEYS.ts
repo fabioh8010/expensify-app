@@ -240,14 +240,32 @@ type OnyxKeysMap = typeof ONYXKEYS;
 type CollectionKey = `${ValueOf<OnyxKeysMap['COLLECTION']>}${string}`;
 type OnyxKey = DeepValueOf<Omit<OnyxKeysMap, 'COLLECTION'>> | CollectionKey;
 
+type Account = {
+    id: string;
+    name?: string;
+};
+
+type Download = {
+    url: string;
+};
+
+type Report = {
+    id: string;
+    data: {
+        message: string;
+        isRead?: boolean;
+    };
+};
+
 // TODO: Improve typings.
 type OnyxValues = {
-    [ONYXKEYS.ACCOUNT]: {id: string; name?: string};
-    [download: `${typeof ONYXKEYS.COLLECTION.DOWNLOAD}${string}`]: {url: string};
-    [report: `${typeof ONYXKEYS.COLLECTION.REPORT}${string}`]: {id: string; data: {message: string; isRead?: boolean}};
+    [ONYXKEYS.ACCOUNT]: Account;
+    [download: `${typeof ONYXKEYS.COLLECTION.DOWNLOAD}${string}`]: Download;
+    [report: `${typeof ONYXKEYS.COLLECTION.REPORT}${string}`]: Report;
     [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
     [ONYXKEYS.NVP_PREFERRED_LOCALE]: string;
+    [ONYXKEYS.LAST_OPENED_PUBLIC_ROOM_ID]: number;
 };
 
 export default ONYXKEYS;
-export type {OnyxKey, OnyxValues};
+export type {OnyxKey, OnyxValues, Account, Download, Report};

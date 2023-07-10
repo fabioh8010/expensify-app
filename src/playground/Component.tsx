@@ -3,9 +3,27 @@
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
 import Onyx, {withOnyx} from 'react-native-onyx';
-import ONYXKEYS, {OnyxKey} from '../ONYXKEYS';
+import ONYXKEYS, {Account, OnyxKey} from '../ONYXKEYS';
 
-function Component() {
+type Nullable<T> = {[P in keyof T]: T[P] | null};
+
+type OnyxProps = Nullable<{
+    account1: Account;
+    account2: Account;
+    // report1: Report;
+    // report2: Report;
+    isLoadingPaymentMethods1: boolean;
+    isLoadingPaymentMethods2: boolean;
+    locale: string;
+    lastOpenedPublicRoomId: number;
+}>;
+
+type Props = OnyxProps & {
+    prop1: string;
+    prop2?: boolean;
+};
+
+function Component({prop1, prop2 = true}: Props) {
     const keys: Promise<OnyxKey[]> = Onyx.getAllKeys();
 
     const isSafeEvictionKey = Onyx.isSafeEvictionKey(ONYXKEYS.ACCOUNT);
@@ -151,4 +169,45 @@ function Component() {
     return null;
 }
 
-export default withOnyx(Component);
+export default withOnyx<Props, OnyxProps>({
+    account1: {
+        key: ONYXKEYS.ACCOUNT,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        selector: (value) => value,
+    },
+    // account1: {
+    //     key: ({}) => ONYXKEYS.ACCOUNT,
+    //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    //     selector: (value) => value,
+    // },
+    account2: {
+        key: ONYXKEYS.ACCOUNT,
+        // selector: 'name',
+    },
+    // report1: {
+    //     key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
+    //     // selector: (value) => value,
+    // },
+    // report2: {
+    //     key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
+    //     // selector: 'data.isRead',
+    // },
+    isLoadingPaymentMethods1: {
+        key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
+    },
+    isLoadingPaymentMethods2: {
+        key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        selector: (value) => value,
+    },
+    locale: {
+        key: ONYXKEYS.NVP_PREFERRED_LOCALE,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        selector: (value) => value,
+    },
+    lastOpenedPublicRoomId: {
+        key: ONYXKEYS.LAST_OPENED_PUBLIC_ROOM_ID,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        selector: (value) => value,
+    },
+})(Component);
