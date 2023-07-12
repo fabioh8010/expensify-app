@@ -3,15 +3,16 @@
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
 import Onyx, {withOnyx} from 'react-native-onyx';
-import ONYXKEYS, {Account, OnyxKey} from '../ONYXKEYS';
+import ONYXKEYS, {Account, Download, OnyxKey, Report} from '../ONYXKEYS';
 
 type Nullable<T> = {[P in keyof T]: T[P] | null};
 
 type OnyxProps = Nullable<{
     account1: Account;
     account2: Account;
-    // report1: Report;
-    // report2: Report;
+    report1: Report;
+    report2: Report;
+    download1: Download;
     isLoadingPaymentMethods1: boolean;
     isLoadingPaymentMethods2: boolean;
     locale: string;
@@ -20,7 +21,7 @@ type OnyxProps = Nullable<{
 
 type Props = OnyxProps & {
     prop1: string;
-    prop2?: boolean;
+    prop2?: number;
 };
 
 function Component({prop1, prop2 = true}: Props) {
@@ -171,27 +172,27 @@ function Component({prop1, prop2 = true}: Props) {
 
 export default withOnyx<Props, OnyxProps>({
     account1: {
-        key: ONYXKEYS.ACCOUNT,
+        key: ({prop1}) => ONYXKEYS.ACCOUNT,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         selector: (value) => value,
     },
-    // account1: {
-    //     key: ({}) => ONYXKEYS.ACCOUNT,
-    //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    //     selector: (value) => value,
-    // },
     account2: {
         key: ONYXKEYS.ACCOUNT,
-        // selector: 'name',
+        selector: 'name',
     },
-    // report1: {
-    //     key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
-    //     // selector: (value) => value,
-    // },
-    // report2: {
-    //     key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
-    //     // selector: 'data.isRead',
-    // },
+    report1: {
+        key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
+        // selector: (value) => value,
+    },
+    report2: {
+        key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
+        selector: 'data.isRead',
+    },
+    download1: {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        key: ({prop1}) => `${ONYXKEYS.COLLECTION.DOWNLOAD}${prop1}`,
+        canEvict: ({prop1}) => prop1 === 'evict',
+    },
     isLoadingPaymentMethods1: {
         key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
     },
@@ -201,9 +202,7 @@ export default withOnyx<Props, OnyxProps>({
         selector: (value) => value,
     },
     locale: {
-        key: ONYXKEYS.NVP_PREFERRED_LOCALE,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        selector: (value) => value,
+        key: ({prop1}) => ONYXKEYS.NVP_PREFERRED_LOCALE,
     },
     lastOpenedPublicRoomId: {
         key: ONYXKEYS.LAST_OPENED_PUBLIC_ROOM_ID,
