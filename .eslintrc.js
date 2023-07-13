@@ -1,10 +1,11 @@
 const globalRestrictedImport = [
     {
         name: 'react-native',
-        importNames: ['useWindowDimensions', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableNativeFeedback', 'TouchableHighlight', 'StatusBar'],
+        importNames: ['useWindowDimensions', 'StatusBar', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableNativeFeedback', 'TouchableHighlight', 'Pressable'],
         message: [
+            '',
             "For 'useWindowDimensions', please use 'src/hooks/useWindowDimensions' instead.",
-            "For 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableNativeFeedback', 'TouchableHighlight', please use 'PressableWithFeedback' and/or 'PressableWithoutFeedback' from 'src/components/Pressable' instead.",
+            "For 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableNativeFeedback', 'TouchableHighlight', 'Pressable', please use 'PressableWithFeedback' and/or 'PressableWithoutFeedback' from 'src/components/Pressable' instead.",
             "For 'StatusBar', please use 'src/libs/StatusBar' instead.",
         ].join('\n'),
     },
@@ -16,10 +17,10 @@ const globalRestrictedImport = [
 ];
 
 module.exports = {
-    extends: ['expensify', 'plugin:storybook/recommended', 'plugin:react-hooks/recommended', 'prettier'],
-    plugins: ['react-hooks'],
+    extends: ['expensify', 'plugin:storybook/recommended', 'plugin:react-hooks/recommended', 'prettier', 'plugin:react-native-a11y/basic'],
+    plugins: ['react-hooks', 'react-native-a11y'],
     parser: 'babel-eslint',
-    ignorePatterns: ['!.*', 'src/vendor', '.github/actions/**/index.js', 'desktop/dist/*.js', 'dist/*.js', 'node_modules/.bin/**', '.git/**'],
+    ignorePatterns: ['!.*', 'src/vendor', '.github/actions/**/index.js', 'desktop/dist/*.js', 'dist/*.js', 'node_modules/.bin/**', 'node_modules/.cache/**', '.git/**'],
     env: {
         jest: true,
     },
@@ -27,6 +28,18 @@ module.exports = {
         __DEV__: 'readonly',
     },
     overrides: [
+        {
+            files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
+            rules: {
+                'react-native-a11y/has-accessibility-hint': ['off'],
+                'react-native-a11y/has-valid-accessibility-descriptors': [
+                    'error',
+                    {
+                        touchables: ['PressableWithoutFeedback', 'PressableWithFeedback'],
+                    },
+                ],
+            },
+        },
         {
             files: ['*.js', '*.jsx'],
             settings: {
@@ -57,8 +70,14 @@ module.exports = {
         },
         {
             files: ['*.ts', '*.tsx'],
-            extends: ['airbnb-typescript', 'plugin:@typescript-eslint/recommended', 'plugin:@typescript-eslint/recommended-requiring-type-checking', 'prettier'],
-            plugins: ['@typescript-eslint', 'jsdoc'],
+            extends: [
+                'airbnb-typescript',
+                'plugin:@typescript-eslint/recommended',
+                'plugin:@typescript-eslint/recommended-requiring-type-checking',
+                'plugin:you-dont-need-lodash-underscore/all',
+                'prettier',
+            ],
+            plugins: ['@typescript-eslint', 'jsdoc', 'you-dont-need-lodash-underscore'],
             parser: '@typescript-eslint/parser',
             parserOptions: {
                 project: './tsconfig.json',
@@ -89,6 +108,15 @@ module.exports = {
                         format: ['camelCase'],
                     },
                 ],
+                '@typescript-eslint/ban-types': [
+                    'error',
+                    {
+                        types: {
+                            object: "Use 'Record<string, T>' instead.",
+                        },
+                        extendDefaults: true,
+                    },
+                ],
                 '@typescript-eslint/array-type': ['error', {default: 'array-simple'}],
                 '@typescript-eslint/no-unsafe-enum-comparison': 'error',
                 '@typescript-eslint/prefer-enum-initializers': 'error',
@@ -103,6 +131,8 @@ module.exports = {
                 'jsdoc/no-types': 'error',
                 'import/no-extraneous-dependencies': 'off',
                 'rulesdir/onyx-props-must-have-default': 'off',
+                'rulesdir/prefer-underscore-method': 'off',
+                'rulesdir/prefer-import-module-contents': 'off',
                 'no-restricted-syntax': [
                     'error',
                     {
@@ -126,8 +156,7 @@ module.exports = {
                             },
                             {
                                 name: 'underscore',
-                                importNames: ['get'],
-                                message: 'Please use optional chaining and nullish coalescing instead.',
+                                message: 'Please use corresponding method from lodash instead',
                             },
                         ],
                     },
