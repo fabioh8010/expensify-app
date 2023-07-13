@@ -111,9 +111,9 @@ function Component({prop1, prop2 = true}: Props) {
         [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
     });
 
-    Onyx.mergeCollection(ONYXKEYS.ACCOUNT, {
-        [`${ONYXKEYS.ACCOUNT}${'report1'}` as const]: {id: 'account'},
-    }); // FIXME: it should raise an error because ONYXKEYS.ACCOUNT is not a collection.
+    // Onyx.mergeCollection(ONYXKEYS.ACCOUNT, {
+    //     [`${ONYXKEYS.ACCOUNT}${'report1'}` as const]: {id: 'account'},
+    // });  // raises an error - correct
 
     Onyx.update([
         {
@@ -146,11 +146,18 @@ function Component({prop1, prop2 = true}: Props) {
             key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
             value: {data: {isRead: true}},
         },
+        // {
+        //     onyxMethod: 'mergeCollection',
+        //     key: ONYXKEYS.ACCOUNT,
+        //     value: {},
+        // }, // raises an error - correct
         {
             onyxMethod: 'mergeCollection',
             key: ONYXKEYS.COLLECTION.REPORT,
             value: {
-                [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}}, // FIXME: not working
+                [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
+                [`${ONYXKEYS.COLLECTION.REPORT}${'report2'}` as const]: {data: {isRead: false}},
+                // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'report2'}` as const]: {data: {isRead: false}}, // raises an error - correct
             },
         },
     ]);

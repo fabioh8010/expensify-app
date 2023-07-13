@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-import {OnyxKey, OnyxValues} from './ONYXKEYS';
+import {OnyxKey, OnyxCollectionKey, OnyxValues} from './ONYXKEYS';
 
 declare module '*.png' {
     const value: import('react-native').ImageSourcePropType;
@@ -22,6 +22,7 @@ declare module 'react-native-device-info/jest/react-native-device-info-mock';
 declare module 'react-native-onyx' {
     interface CustomTypeOptions {
         keys: OnyxKey;
+        collectionKeys: OnyxCollectionKey;
         values: OnyxValues;
     }
 }
