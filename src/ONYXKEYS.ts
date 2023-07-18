@@ -258,6 +258,7 @@ type Download = {
 
 type Report = {
     id: string;
+    isArchived: boolean;
     data: {
         message: string;
         isRead?: boolean;
