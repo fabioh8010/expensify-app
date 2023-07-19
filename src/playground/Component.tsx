@@ -128,42 +128,42 @@ function Component({reportId, prop2 = true}: Props) {
 
     Onyx.update([
         {
-            onyxMethod: 'merge',
+            onyxMethod: Onyx.METHOD.MERGE,
             key: ONYXKEYS.ACCOUNT,
             value: {id: 'id1'},
         },
         {
-            onyxMethod: 'merge',
+            onyxMethod: Onyx.METHOD.MERGE,
             key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
             value: false,
         },
         // {
-        //     onyxMethod: 'merge',
+        //     onyxMethod: Onyx.METHOD.MERGE,
         //     key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
         //     value: {id: 'id1'}, // raises an error - correct
         // },
         {
-            onyxMethod: 'merge',
+            onyxMethod: Onyx.METHOD.MERGE,
             key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`,
             value: {url: 'url1'},
         },
         {
-            onyxMethod: 'set',
+            onyxMethod: Onyx.METHOD.SET,
             key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
             value: {id: 'id1', isArchived: false, data: {message: 'message1'}},
         },
         {
-            onyxMethod: 'merge',
+            onyxMethod: Onyx.METHOD.MERGE,
             key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
             value: {data: {isRead: true}},
         },
         // {
-        //     onyxMethod: 'mergeCollection',
+        //     onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
         //     key: ONYXKEYS.ACCOUNT,
         //     value: {},
         // }, // raises an error - correct
         {
-            onyxMethod: 'mergeCollection',
+            onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
             key: ONYXKEYS.COLLECTION.REPORT,
             value: {
                 [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
