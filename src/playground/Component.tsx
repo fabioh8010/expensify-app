@@ -4,7 +4,6 @@
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
 import Onyx, {withOnyx} from 'react-native-onyx';
-import {createOnyxSelector} from 'react-native-onyx/lib/withOnyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
@@ -77,8 +76,8 @@ function Component({reportId, prop2 = true}: Props) {
                 return;
             }
 
-            console.log(value.report1.id);
-            console.log(value.report2.id);
+            console.log(value.report1?.id);
+            console.log(value.report2?.id);
         },
         waitForCollectionCallback: true,
         selector: 'data.isRead',
@@ -91,12 +90,13 @@ function Component({reportId, prop2 = true}: Props) {
 
     Onyx.set(ONYXKEYS.ACCOUNT, {id: 'account1'});
     Onyx.set(ONYXKEYS.IS_LOADING_PAYMENT_METHODS, true);
+    Onyx.set(ONYXKEYS.NVP_PREFERRED_LOCALE, null);
     Onyx.set(`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`, {url: 'download_url'});
     // Onyx.set(ONYXKEYS.ACCOUNT, 'wrong value'); // raises an error, wrong value - correct
 
     Onyx.multiSet({
         [ONYXKEYS.ACCOUNT]: {id: 'id2'},
-        [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: false,
+        [ONYXKEYS.NVP_PREFERRED_LOCALE]: null,
         [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {url: 'download_url'},
         [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {id: 'download_url', isArchived: false, data: {message: 'message1'}},
         // [ONYXKEYS.NVP_PREFERRED_LOCALE]: 1, // raises an error, wrong value - correct
@@ -136,6 +136,11 @@ function Component({reportId, prop2 = true}: Props) {
             onyxMethod: Onyx.METHOD.MERGE,
             key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
             value: false,
+        },
+        {
+            onyxMethod: Onyx.METHOD.SET,
+            key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
+            value: null,
         },
         // {
         //     onyxMethod: Onyx.METHOD.MERGE,
@@ -197,7 +202,6 @@ export default withOnyx<Props, OnyxProps>({
     onyxPropWithStringKeyAndFunctionSelector: {
         key: ONYXKEYS.ACCOUNT,
         selector: (value: Account | null): string => value?.id ?? '',
-        // selector: createOnyxSelector<typeof ONYXKEYS.ACCOUNT, OnyxProps['onyxPropWithStringKeyAndFunctionSelector']>((value) => value?.id ?? ''),
     },
     onyxPropWithStringKeyAndStringSelector: {
         key: ONYXKEYS.ACCOUNT,
@@ -212,8 +216,6 @@ export default withOnyx<Props, OnyxProps>({
     onyxPropWithFunctionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.ACCOUNT,
         // key: ({reportId}) => ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // raises an error - correct
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        // selector: createOnyxSelector<typeof ONYXKEYS.ACCOUNT, OnyxProps['onyxPropWithFunctionKeyAndFunctionSelector']>((value) => value?.id ?? ''),
         selector: (value: Account | null) => value?.id ?? '',
         // selector: (value: Report | null) => value?.id ?? '', // raises an error - correct
     },
@@ -229,7 +231,6 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
-        // selector: createOnyxSelector<typeof ONYXKEYS.COLLECTION.REPORT, OnyxProps['onyxPropWithStringCollectionKeyAndFunctionSelector']>((value) => value?.isArchived ?? false),
         selector: (value: Report | null) => value?.isArchived ?? false,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
@@ -245,8 +246,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
-        selector: createOnyxSelector<typeof ONYXKEYS.COLLECTION.REPORT, OnyxProps['onyxPropWithStringCollectionKeyAndFunctionSelector']>((value) => value?.isArchived ?? false),
-        // selector: (value: Report | null) => value?.isArchived ?? false,
+        selector: (value: Report | null) => value?.isArchived ?? false,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
     onyxPropWithFunctionCollectionKeyAndStringSelector: {
