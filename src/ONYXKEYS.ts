@@ -213,6 +213,7 @@ const ONYXKEYS = {
         EDIT_TASK_FORM: 'editTaskForm',
         MONEY_REQUEST_DESCRIPTION_FORM: 'moneyRequestDescriptionForm',
         NEW_CONTACT_METHOD_FORM: 'newContactMethodForm',
+        PAYPAL_FORM: 'payPalForm',
     },
 
     // Whether we should show the compose input or not
@@ -220,9 +221,6 @@ const ONYXKEYS = {
 
     // Is app in beta version
     IS_BETA: 'isBeta',
-
-    // Whether the auth token is valid
-    IS_TOKEN_VALID: 'isTokenValid',
 
     // The theme setting set by the user in preferences.
     // This can be either "light", "dark" or "system"
