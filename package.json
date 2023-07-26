@@ -116,7 +116,7 @@
     "react-native-key-command": "^1.0.1",
     "react-native-localize": "^2.2.6",
     "react-native-modal": "^13.0.0",
-    "react-native-onyx": "git+https://github.com/fabioh8010/react-native-onyx#6ec2d9591e6a109be6c4c8bce55d41740987658d",
+    "react-native-onyx": "git+https://github.com/fabioh8010/react-native-onyx#4332d2f176c8c15b5fcb1d125383a0f5ed13eaa5",
     "react-native-pdf": "^6.6.2",
     "react-native-performance": "^4.0.0",
     "react-native-permissions": "^3.0.1",

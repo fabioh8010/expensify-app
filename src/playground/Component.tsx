@@ -192,6 +192,10 @@ function Component({reportId, prop2 = true}: Props) {
 
     Onyx.registerLogger(({level, message}) => {});
 
+    Onyx.hasPendingMergeForKey(ONYXKEYS.ACCOUNT);
+
+    Onyx.setMemoryOnlyKeys([ONYXKEYS.ACCOUNT, ONYXKEYS.COLLECTION.DOWNLOAD, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]);
+
     return null;
 }
 
@@ -222,7 +226,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: Record<string, Report | null>) => true,
+        selector: (value: Report | null) => true,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
 
@@ -242,7 +246,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: Record<string, Report | null>) => value?.isArchived ?? false,
+        selector: (value: Report | null) => value?.isArchived ?? false,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
 
