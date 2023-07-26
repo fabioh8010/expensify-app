@@ -244,7 +244,7 @@ const ONYXKEYS = {
 type DeepValueOf<T> = T extends object ? DeepValueOf<T[keyof T]> : T;
 
 type OnyxKeysMap = typeof ONYXKEYS;
-type OnyxCollectionKey = `${ValueOf<OnyxKeysMap['COLLECTION']>}${string}`;
+type OnyxCollectionKey = ValueOf<OnyxKeysMap['COLLECTION']>;
 type OnyxKey = DeepValueOf<Omit<OnyxKeysMap, 'COLLECTION'>>;
 
 type Account = {

@@ -9,19 +9,21 @@ import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 type OnyxProps = {
     onyxPropWithStringKey: Account | null;
     onyxPropWithStringKeyAndFunctionSelector: string;
-    onyxPropWithStringKeyAndStringSelector: string;
 
     onyxPropWithFunctionKey: Account | null;
     onyxPropWithFunctionKeyAndFunctionSelector: string;
-    onyxPropWithFunctionKeyAndStringSelector: string;
 
-    onyxPropWithStringCollectionKey: Report | null;
+    onyxPropWithStringCollectionKey: Record<string, Report | null> | null;
     onyxPropWithStringCollectionKeyAndFunctionSelector: boolean;
-    onyxPropWithStringCollectionKeyAndStringSelector: boolean;
 
-    onyxPropWithFunctionCollectionKey: Report | null;
+    onyxPropWithStringCollectionRecordKey: Report | null;
+    onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
+
+    onyxPropWithFunctionCollectionKey: Record<string, Report | null> | null;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
-    onyxPropWithFunctionCollectionKeyAndStringSelector: boolean;
+
+    onyxPropWithFunctionCollectionRecordKey: Report | null;
+    onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: boolean;
 };
 
 type Props = OnyxProps & {
@@ -80,7 +82,6 @@ function Component({reportId, prop2 = true}: Props) {
             console.log(value.report2?.id);
         },
         waitForCollectionCallback: true,
-        selector: 'data.isRead',
     });
 
     Onyx.disconnect(1000);
@@ -186,7 +187,7 @@ function Component({reportId, prop2 = true}: Props) {
             [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {url: 'download_url'},
             // [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: 'wrong value', // raises an error, wrong value - correct
         },
-        safeEvictionKeys: [ONYXKEYS.ACCOUNT],
+        safeEvictionKeys: [ONYXKEYS.ACCOUNT, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`],
     });
 
     Onyx.registerLogger(({level, message}) => {});
@@ -203,11 +204,6 @@ export default withOnyx<Props, OnyxProps>({
         key: ONYXKEYS.ACCOUNT,
         selector: (value: Account | null): string => value?.id ?? '',
     },
-    onyxPropWithStringKeyAndStringSelector: {
-        key: ONYXKEYS.ACCOUNT,
-        // key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // don't raises an error - correct
-        selector: 'id',
-    },
 
     onyxPropWithFunctionKey: {
         key: ({reportId}) => ONYXKEYS.ACCOUNT,
@@ -219,39 +215,44 @@ export default withOnyx<Props, OnyxProps>({
         selector: (value: Account | null) => value?.id ?? '',
         // selector: (value: Report | null) => value?.id ?? '', // raises an error - correct
     },
-    onyxPropWithFunctionKeyAndStringSelector: {
-        key: ({reportId}) => ONYXKEYS.ACCOUNT,
-        // key: ({reportId}) => ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // don't raises an error - correct
-        selector: 'id',
-    },
 
     onyxPropWithStringCollectionKey: {
         key: ONYXKEYS.COLLECTION.REPORT,
-        // key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${`report1`}`, // raises an error - correct
+        // key: ONYXKEYS.COLLECTION.DOWNLOAD, // raises an error - correct
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
+        key: ONYXKEYS.COLLECTION.REPORT,
+        selector: (value: Record<string, Report | null>) => true,
+        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+    },
+
+    onyxPropWithStringCollectionRecordKey: {
+        key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
+        // key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${`report1`}`, // raises an error - correct
+    },
+    onyxPropWithStringCollectionRecordKeyAndFunctionSelector: {
         key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
         selector: (value: Report | null) => value?.isArchived ?? false,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
-    },
-    onyxPropWithStringCollectionKeyAndStringSelector: {
-        key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
-        // key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${`report1`}`, // don't raises an error - correct
-        selector: 'isArchived',
     },
 
     onyxPropWithFunctionCollectionKey: {
+        key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
+        // key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT, // raises an error - correct
+    },
+    onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
+        key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
+        selector: (value: Record<string, Report | null>) => value?.isArchived ?? false,
+        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+    },
+
+    onyxPropWithFunctionCollectionRecordKey: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
         // key: ({reportId}) => `${ONYXKEYS.COLLECTION.DOWNLOAD}${reportId}`, // raises an error - correct
     },
-    onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
+    onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
         selector: (value: Report | null) => value?.isArchived ?? false,
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
-    },
-    onyxPropWithFunctionCollectionKeyAndStringSelector: {
-        key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
-        // key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`, // don't raises an error - correct
-        selector: 'isArchived',
     },
 })(Component);
