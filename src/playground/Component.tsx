@@ -3,29 +3,29 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
-import Onyx, {withOnyx} from 'react-native-onyx';
+import Onyx, {withOnyx, OnyxRecord, OnyxCollectionRecords} from 'react-native-onyx';
 import {CollectionMapping, CollectionRecordMapping, Mapping} from 'react-native-onyx/lib/withOnyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
-    onyxPropWithStringKey: Account | null;
+    onyxPropWithStringKey: OnyxRecord<Account>;
     onyxPropWithStringKeyAndFunctionSelector: string;
 
-    onyxPropWithFunctionKey: Account | null;
+    onyxPropWithFunctionKey: OnyxRecord<Account>;
     onyxPropWithFunctionKeyAndFunctionSelector: string;
 
-    onyxPropWithStringCollectionKey: Record<string, Report | null> | null;
+    onyxPropWithStringCollectionKey: OnyxCollectionRecords<Report>;
     onyxPropWithStringCollectionKeyAndFunctionSelector: boolean;
 
-    onyxPropWithStringCollectionRecordKey: Report | null;
+    onyxPropWithStringCollectionRecordKey: OnyxRecord<Report>;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
 
-    // onyxPropWithFunctionCollectionKey: Record<string, Report | null> | null;
-    onyxPropWithFunctionCollectionKey: Report | null;
+    // onyxPropWithFunctionCollectionKey: OnyxCollectionRecords<Report>;
+    onyxPropWithFunctionCollectionKey: OnyxRecord<Report>;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
 
-    // onyxPropWithFunctionCollectionRecordKey: Report | null;
-    onyxPropWithFunctionCollectionRecordKey: Record<string, Report | null> | null;
+    // onyxPropWithFunctionCollectionRecordKey: OnyxRecord<Report>;
+    onyxPropWithFunctionCollectionRecordKey: OnyxCollectionRecords<Report>;
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: boolean;
 };
 
