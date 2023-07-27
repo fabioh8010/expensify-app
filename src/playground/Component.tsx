@@ -4,6 +4,7 @@
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
 import Onyx, {withOnyx} from 'react-native-onyx';
+import {CollectionMapping, CollectionRecordMapping, Mapping} from 'react-native-onyx/lib/withOnyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
@@ -19,10 +20,12 @@ type OnyxProps = {
     onyxPropWithStringCollectionRecordKey: Report | null;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
 
-    onyxPropWithFunctionCollectionKey: Record<string, Report | null> | null;
+    // onyxPropWithFunctionCollectionKey: Record<string, Report | null> | null;
+    onyxPropWithFunctionCollectionKey: Report | null;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
 
-    onyxPropWithFunctionCollectionRecordKey: Report | null;
+    // onyxPropWithFunctionCollectionRecordKey: Report | null;
+    onyxPropWithFunctionCollectionRecordKey: Record<string, Report | null> | null;
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: boolean;
 };
 
@@ -240,6 +243,7 @@ export default withOnyx<Props, OnyxProps>({
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
 
+    // MUST ERROR
     onyxPropWithFunctionCollectionKey: {
         key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
         // key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT, // raises an error - correct
@@ -250,6 +254,7 @@ export default withOnyx<Props, OnyxProps>({
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
 
+    // MUST ERROR
     onyxPropWithFunctionCollectionRecordKey: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
         // key: ({reportId}) => `${ONYXKEYS.COLLECTION.DOWNLOAD}${reportId}`, // raises an error - correct
@@ -260,3 +265,20 @@ export default withOnyx<Props, OnyxProps>({
         // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
     },
 })(Component);
+
+type OnyxPropWithStringKeyMapping = Mapping<Props, OnyxProps, 'onyxPropWithStringKey', 'account'>;
+type OnyxPropWithStringKeyValue = OnyxPropWithStringKeyMapping['onyxValue']; // Account | null
+
+type OnyxPropWithStringCollectionKeyMapping = CollectionMapping<Props, OnyxProps, 'onyxPropWithStringCollectionKey', 'report_'>;
+type OnyxPropWithStringCollectionKeyValue = OnyxPropWithStringCollectionKeyMapping['onyxValue']; // Record<string, Report | null> | null
+
+type OnyxPropWithStringCollectionRecordKeyMapping = CollectionRecordMapping<Props, OnyxProps, 'onyxPropWithStringCollectionRecordKey', 'report_id1'>;
+type OnyxPropWithStringCollectionRecordKeyValue = OnyxPropWithStringCollectionRecordKeyMapping['onyxValue']; // Report | null
+
+// MUST ERROR
+type OnyxPropWithStringCollectionKeyMapping2 = CollectionMapping<Props, OnyxProps, 'onyxPropWithStringCollectionKey', 'report_id1'>;
+type OnyxPropWithStringCollectionKeyValue2 = OnyxPropWithStringCollectionKeyMapping2['onyxValue'];
+
+// MUST ERROR
+type OnyxPropWithStringCollectionRecordKeyMapping2 = CollectionRecordMapping<Props, OnyxProps, 'onyxPropWithStringCollectionRecordKey', 'report_'>;
+type OnyxPropWithStringCollectionRecordKeyValue2 = OnyxPropWithStringCollectionRecordKeyMapping2['onyxValue'];
