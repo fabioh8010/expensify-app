@@ -21,6 +21,7 @@
             "es2022.string"
         ],
         "allowJs": true,
+        "checkJs": false,
         "jsx": "react-native",
         "noEmit": true,
         "isolatedModules": true,
@@ -28,8 +29,9 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "incremental": true
     },
-    "exclude": ["**/node_modules/*", "**/dist/*", ".github/actions/**/index.js"],
+    "exclude": ["**/node_modules/*", "**/dist/*", ".github/actions/**/index.js", "assets/animations/*.json"],
     "include": ["src", "desktop", "web", "docs", "assets", "config", "tests", "jest", "__mocks__", ".github/**/*", ".storybook/**/*"]
 }
