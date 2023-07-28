@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import PropTypes from 'prop-types';
 import Lottie from 'lottie-react-native';
-import FireworksAnimation from '../../assets/animations/Fireworks.json';
+import FireworksAnimation from '../../assets/animations/Fireworks.lottie';
 import Text from './Text';
 import styles from '../styles/styles';
 import Button from './Button';

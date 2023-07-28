@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
 import Lottie from 'lottie-react-native';
-import ReviewingBankInfoAnimation from '../../assets/animations/ReviewingBankInfo.json';
+import ReviewingBankInfoAnimation from '../../assets/animations/ReviewingBankInfo.lottie';
 import styles from '../styles/styles';
 import withLocalize, {withLocalizePropTypes} from './withLocalize';
 import Text from './Text';
