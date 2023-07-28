@@ -16,7 +16,8 @@ declare module '*.svg' {
 
 declare module '*.lottie' {
     import {AnimatedLottieViewProps} from 'lottie-react-native';
-    export default AnimatedLottieViewProps['source'];
+
+    export default AnimatedLottieViewProps.source;
 }
 
 declare module 'react-native-device-info/jest/react-native-device-info-mock';

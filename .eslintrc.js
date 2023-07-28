@@ -153,7 +153,7 @@ module.exports = {
                     'error',
                     {
                         paths: [
-                            ...globalRestrictedImport,
+                            ...restrictedImportPaths,
                             {
                                 name: 'underscore',
                                 message: 'Please use the corresponding method from lodash instead',
