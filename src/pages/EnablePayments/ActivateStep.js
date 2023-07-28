@@ -1,7 +1,7 @@
 import React from 'react';
 import {withOnyx} from 'react-native-onyx';
-import FireworksAnimation from '../../../assets/animations/Fireworks.json';
-import ReviewingBankInfoAnimation from '../../../assets/animations/ReviewingBankInfo.json';
+import FireworksAnimation from '../../../assets/animations/Fireworks.lottie';
+import ReviewingBankInfoAnimation from '../../../assets/animations/ReviewingBankInfo.lottie';
 import HeaderWithBackButton from '../../components/HeaderWithBackButton';
 import withLocalize, {withLocalizePropTypes} from '../../components/withLocalize';
 import userWalletPropTypes from './userWalletPropTypes';

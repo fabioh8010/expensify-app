@@ -1,8 +1,8 @@
-import ExpensifyLounge from '../../assets/animations/ExpensifyLounge.json';
-import Fireworks from '../../assets/animations/Fireworks.json';
-import Hands from '../../assets/animations/Hands.json';
-import PreferencesDJ from '../../assets/animations/PreferencesDJ.json';
-import ReviewingBankInfo from '../../assets/animations/ReviewingBankInfo.json';
-import WorkspacePlanet from '../../assets/animations/WorkspacePlanet.json';
+import ExpensifyLounge from '../../assets/animations/ExpensifyLounge.lottie';
+import Fireworks from '../../assets/animations/Fireworks.lottie';
+import Hands from '../../assets/animations/Hands.lottie';
+import PreferencesDJ from '../../assets/animations/PreferencesDJ.lottie';
+import ReviewingBankInfo from '../../assets/animations/ReviewingBankInfo.lottie';
+import WorkspacePlanet from '../../assets/animations/WorkspacePlanet.lottie';
 
 export {ExpensifyLounge, Fireworks, Hands, PreferencesDJ, ReviewingBankInfo, WorkspacePlanet};

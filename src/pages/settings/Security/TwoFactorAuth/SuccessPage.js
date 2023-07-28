@@ -5,7 +5,7 @@ import ScreenWrapper from '../../../../components/ScreenWrapper';
 import withLocalize, {withLocalizePropTypes} from '../../../../components/withLocalize';
 import ROUTES from '../../../../ROUTES';
 import FullPageOfflineBlockingView from '../../../../components/BlockingViews/FullPageOfflineBlockingView';
-import FireworksAnimation from '../../../../../assets/animations/Fireworks.json';
+import FireworksAnimation from '../../../../../assets/animations/Fireworks.lottie';
 import ConfirmationPage from '../../../../components/ConfirmationPage';
 
 const defaultProps = {};

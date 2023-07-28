@@ -1,6 +1,6 @@
 import React from 'react';
 import Lottie from 'lottie-react-native';
-import hands from '../../../assets/animations/Hands.json';
+import hands from '../../../assets/animations/Hands.lottie';
 import withWindowDimensions, {windowDimensionsPropTypes} from '../../components/withWindowDimensions';
 import styles from '../../styles/styles';
 import variables from '../../styles/variables';
