@@ -1,3 +1,3 @@
-import * as Device from 'expensify-common/lib/Device';
+import {getOSAndName} from 'expensify-common/lib/Device';
 
-export default Device.getOSAndName;
+export default getOSAndName;
