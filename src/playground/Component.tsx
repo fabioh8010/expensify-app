@@ -3,8 +3,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
-import Onyx, {withOnyx, OnyxRecord, OnyxCollectionRecords} from 'react-native-onyx';
-import {CollectionMapping, CollectionRecordMapping, Mapping} from 'react-native-onyx/lib/withOnyx';
+import Onyx, {OnyxCollectionRecords, OnyxRecord, withOnyx} from 'react-native-onyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
@@ -20,12 +19,10 @@ type OnyxProps = {
     onyxPropWithStringCollectionRecordKey: OnyxRecord<Report>;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
 
-    // onyxPropWithFunctionCollectionKey: OnyxCollectionRecords<Report>;
-    onyxPropWithFunctionCollectionKey: OnyxRecord<Report>;
+    onyxPropWithFunctionCollectionKey: OnyxCollectionRecords<Report>;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
 
-    // onyxPropWithFunctionCollectionRecordKey: OnyxRecord<Report>;
-    onyxPropWithFunctionCollectionRecordKey: OnyxCollectionRecords<Report>;
+    onyxPropWithFunctionCollectionRecordKey: OnyxRecord<Report>;
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: boolean;
 };
 
@@ -209,7 +206,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringKeyAndFunctionSelector: {
         key: ONYXKEYS.ACCOUNT,
-        selector: (value: Account | null): string => value?.id ?? '',
+        selector: (value: OnyxRecord<Account>): string => value?.id ?? '',
     },
 
     onyxPropWithFunctionKey: {
@@ -219,8 +216,8 @@ export default withOnyx<Props, OnyxProps>({
     onyxPropWithFunctionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.ACCOUNT,
         // key: ({reportId}) => ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // raises an error - correct
-        selector: (value: Account | null) => value?.id ?? '',
-        // selector: (value: Report | null) => value?.id ?? '', // raises an error - correct
+        selector: (value: OnyxRecord<Account>) => value?.id ?? '',
+        // selector: (value: OnyxRecord<Report>) => value?.id ?? '', // raises an error - correct
     },
 
     onyxPropWithStringCollectionKey: {
@@ -229,8 +226,8 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: Report | null) => true,
-        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxRecord<Report>) => true,
+        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithStringCollectionRecordKey: {
@@ -239,46 +236,27 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: {
         key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
-        selector: (value: Report | null) => value?.isArchived ?? false,
-        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
-    // MUST ERROR
     onyxPropWithFunctionCollectionKey: {
         key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
-        // key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT, // raises an error - correct
+        // key: ({reportId}) => ONYXKEYS.COLLECTION.DOWNLOAD, // raises an error - correct
     },
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: Report | null) => value?.isArchived ?? false,
-        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
-    // MUST ERROR
     onyxPropWithFunctionCollectionRecordKey: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
         // key: ({reportId}) => `${ONYXKEYS.COLLECTION.DOWNLOAD}${reportId}`, // raises an error - correct
     },
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
-        selector: (value: Report | null) => value?.isArchived ?? false,
-        // selector: (value: Account | null) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 })(Component);
-
-type OnyxPropWithStringKeyMapping = Mapping<Props, OnyxProps, 'onyxPropWithStringKey', 'account'>;
-type OnyxPropWithStringKeyValue = OnyxPropWithStringKeyMapping['onyxValue']; // Account | null
-
-type OnyxPropWithStringCollectionKeyMapping = CollectionMapping<Props, OnyxProps, 'onyxPropWithStringCollectionKey', 'report_'>;
-type OnyxPropWithStringCollectionKeyValue = OnyxPropWithStringCollectionKeyMapping['onyxValue']; // Record<string, Report | null> | null
-
-type OnyxPropWithStringCollectionRecordKeyMapping = CollectionRecordMapping<Props, OnyxProps, 'onyxPropWithStringCollectionRecordKey', 'report_id1'>;
-type OnyxPropWithStringCollectionRecordKeyValue = OnyxPropWithStringCollectionRecordKeyMapping['onyxValue']; // Report | null
-
-// MUST ERROR
-type OnyxPropWithStringCollectionKeyMapping2 = CollectionMapping<Props, OnyxProps, 'onyxPropWithStringCollectionKey', 'report_id1'>;
-type OnyxPropWithStringCollectionKeyValue2 = OnyxPropWithStringCollectionKeyMapping2['onyxValue'];
-
-// MUST ERROR
-type OnyxPropWithStringCollectionRecordKeyMapping2 = CollectionRecordMapping<Props, OnyxProps, 'onyxPropWithStringCollectionRecordKey', 'report_'>;
-type OnyxPropWithStringCollectionRecordKeyValue2 = OnyxPropWithStringCollectionRecordKeyMapping2['onyxValue'];
