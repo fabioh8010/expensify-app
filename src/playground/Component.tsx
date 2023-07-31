@@ -55,7 +55,6 @@ function Component({reportId, prop2 = true}: Props) {
 
             console.log(value.id);
         },
-        selector: (value) => ({id: value?.id ?? 'id1'}),
     });
 
     Onyx.connect({
@@ -67,8 +66,6 @@ function Component({reportId, prop2 = true}: Props) {
 
             console.log(value.url);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        selector: (value) => value,
     });
 
     Onyx.connect({
@@ -123,9 +120,13 @@ function Component({reportId, prop2 = true}: Props) {
         [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
     });
 
+    // Onyx.mergeCollection(`${ONYXKEYS.COLLECTION.REPORT}${'report'}`, {
+    //     [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
+    // }); // raises an error, not a collection - correct
+
     // Onyx.mergeCollection(ONYXKEYS.ACCOUNT, {
     //     [`${ONYXKEYS.ACCOUNT}${'report1'}` as const]: {id: 'account'},
-    // });  // raises an error, not a collection - correct
+    // }); // raises an error, not a collection - correct
 
     Onyx.update([
         {
@@ -167,7 +168,12 @@ function Component({reportId, prop2 = true}: Props) {
         //     onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
         //     key: ONYXKEYS.ACCOUNT,
         //     value: {},
-        // }, // raises an error - correct
+        // }, // raises an error, not a collection - correct
+        // {
+        //     onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
+        //     key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
+        //     value: {},
+        // }, // raises an error, not a collection - correct
         {
             onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
             key: ONYXKEYS.COLLECTION.REPORT,
