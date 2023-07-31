@@ -1,8 +1,8 @@
-import ExpensifyLounge from '../../assets/animations/ExpensifyLounge.lottie';
-import Fireworks from '../../assets/animations/Fireworks.lottie';
-import Hands from '../../assets/animations/Hands.lottie';
-import PreferencesDJ from '../../assets/animations/PreferencesDJ.lottie';
-import ReviewingBankInfo from '../../assets/animations/ReviewingBankInfo.lottie';
-import WorkspacePlanet from '../../assets/animations/WorkspacePlanet.lottie';
+const ExpensifyLounge = require('../../assets/animations/ExpensifyLounge.json');
+const Fireworks = require('../../assets/animations/Fireworks.json');
+const Hands = require('../../assets/animations/Hands.json');
+const PreferencesDJ = require('../../assets/animations/PreferencesDJ.json');
+const ReviewingBankInfo = require('../../assets/animations/ReviewingBankInfo.json');
+const WorkspacePlanet = require('../../assets/animations/WorkspacePlanet.json');
 
 export {ExpensifyLounge, Fireworks, Hands, PreferencesDJ, ReviewingBankInfo, WorkspacePlanet};

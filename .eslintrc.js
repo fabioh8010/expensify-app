@@ -19,7 +19,7 @@ const restrictedImportPaths = [
 const restrictedImportPatterns = [
     {
         group: ['**/assets/animations/**/*.json'],
-        message: 'Rename your lottie animations to use the .lottie extension instead of .json',
+        message: "Do not import animations directly. Please use the 'src/components/LottieAnimations' import instead.",
     },
 ];
 
