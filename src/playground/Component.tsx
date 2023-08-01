@@ -1,28 +1,27 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
-import Onyx, {OnyxCollectionRecords, OnyxRecord, withOnyx} from 'react-native-onyx';
+import Onyx, {OnyxCollectionEntries, OnyxEntry, withOnyx} from 'react-native-onyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
-    onyxPropWithStringKey: OnyxRecord<Account>;
+    onyxPropWithStringKey: OnyxEntry<Account>;
     onyxPropWithStringKeyAndFunctionSelector: string;
 
-    onyxPropWithFunctionKey: OnyxRecord<Account>;
+    onyxPropWithFunctionKey: OnyxEntry<Account>;
     onyxPropWithFunctionKeyAndFunctionSelector: string;
 
-    onyxPropWithStringCollectionKey: OnyxCollectionRecords<Report>;
+    onyxPropWithStringCollectionKey: OnyxCollectionEntries<Report>;
     onyxPropWithStringCollectionKeyAndFunctionSelector: boolean;
 
-    onyxPropWithStringCollectionRecordKey: OnyxRecord<Report>;
+    onyxPropWithStringCollectionRecordKey: OnyxEntry<Report>;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
 
-    onyxPropWithFunctionCollectionKey: OnyxCollectionRecords<Report>;
+    onyxPropWithFunctionCollectionKey: OnyxCollectionEntries<Report>;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
 
-    onyxPropWithFunctionCollectionRecordKey: OnyxRecord<Report>;
+    onyxPropWithFunctionCollectionRecordKey: OnyxEntry<Report>;
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: boolean;
 };
 
@@ -212,7 +211,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringKeyAndFunctionSelector: {
         key: ONYXKEYS.ACCOUNT,
-        selector: (value: OnyxRecord<Account>): string => value?.id ?? '',
+        selector: (value: OnyxEntry<Account>): string => value?.id ?? '',
     },
 
     onyxPropWithFunctionKey: {
@@ -222,8 +221,8 @@ export default withOnyx<Props, OnyxProps>({
     onyxPropWithFunctionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.ACCOUNT,
         // key: ({reportId}) => ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // raises an error - correct
-        selector: (value: OnyxRecord<Account>) => value?.id ?? '',
-        // selector: (value: OnyxRecord<Report>) => value?.id ?? '', // raises an error - correct
+        selector: (value: OnyxEntry<Account>) => value?.id ?? '',
+        // selector: (value: OnyxEntry<Report>) => value?.id ?? '', // raises an error - correct
     },
 
     onyxPropWithStringCollectionKey: {
@@ -232,8 +231,8 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: OnyxRecord<Report>) => true,
-        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxEntry<Report>) => true,
+        // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithStringCollectionRecordKey: {
@@ -242,8 +241,8 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: {
         key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
-        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
-        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxEntry<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithFunctionCollectionKey: {
@@ -252,8 +251,8 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
-        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxEntry<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithFunctionCollectionRecordKey: {
@@ -262,7 +261,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithFunctionCollectionRecordKeyAndFunctionSelector: {
         key: ({reportId}) => `${ONYXKEYS.COLLECTION.REPORT}${reportId}`,
-        selector: (value: OnyxRecord<Report>) => value?.isArchived ?? false,
-        // selector: (value: OnyxRecord<Account>) => false, // FIXME: don't raises an error - incorrect
+        selector: (value: OnyxEntry<Report>) => value?.isArchived ?? false,
+        // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 })(Component);
