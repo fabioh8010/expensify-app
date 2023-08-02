@@ -13,7 +13,7 @@ type OnyxProps = {
     onyxPropWithFunctionKeyAndFunctionSelector: string;
 
     onyxPropWithStringCollectionKey: OnyxCollectionEntries<Report>;
-    onyxPropWithStringCollectionKeyAndFunctionSelector: boolean;
+    onyxPropWithStringCollectionKeyAndFunctionSelector: string;
 
     onyxPropWithStringCollectionRecordKey: OnyxEntry<Report>;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
@@ -146,7 +146,7 @@ function Component({reportId, prop2 = true}: Props) {
         // {
         //     onyxMethod: Onyx.METHOD.MERGE,
         //     key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
-        //     value: {id: 'id1'}, // raises an error - correct
+        //     value: {id: 'id1'}, // raises an error, wrong value - correct
         // },
         {
             onyxMethod: Onyx.METHOD.MERGE,
@@ -231,7 +231,7 @@ export default withOnyx<Props, OnyxProps>({
     },
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
-        selector: (value: OnyxEntry<Report>) => true,
+        selector: (value: OnyxEntry<Report>) => '',
         // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
     },
 

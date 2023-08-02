@@ -269,8 +269,8 @@ type Report = {
 // TODO: Improve typings.
 type OnyxValues = {
     [ONYXKEYS.ACCOUNT]: Account;
-    [download: `${typeof ONYXKEYS.COLLECTION.DOWNLOAD}${string}`]: Download;
-    [report: `${typeof ONYXKEYS.COLLECTION.REPORT}${string}`]: Report;
+    [ONYXKEYS.COLLECTION.DOWNLOAD]: Download;
+    [ONYXKEYS.COLLECTION.REPORT]: Report;
     [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
     [ONYXKEYS.NVP_PREFERRED_LOCALE]: string;
     [ONYXKEYS.LAST_OPENED_PUBLIC_ROOM_ID]: number;
