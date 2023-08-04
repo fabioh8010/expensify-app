@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
-import Onyx, {OnyxCollection, OnyxEntry, withOnyx} from 'react-native-onyx';
+import Onyx, {OnyxCollection, OnyxEntry, OnyxUpdate, withOnyx} from 'react-native-onyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
@@ -184,6 +184,24 @@ function Component({reportId, prop2 = true}: Props) {
         },
     ]);
 
+    const optimisticData: OnyxUpdate[] = [
+        {
+            onyxMethod: Onyx.METHOD.MERGE,
+            key: ONYXKEYS.ACCOUNT,
+            value: {id: 'id1'},
+        },
+        {
+            onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
+            key: ONYXKEYS.COLLECTION.REPORT,
+            value: {
+                [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {data: {isRead: true}},
+                [`${ONYXKEYS.COLLECTION.REPORT}${'report2'}` as const]: {data: {isRead: false}},
+                // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'report2'}` as const]: {data: {isRead: false}}, // raises an error - correct
+            },
+        },
+    ];
+    Onyx.update(optimisticData);
+
     Onyx.init({
         keys: ONYXKEYS,
         initialKeyStates: {
@@ -232,7 +250,7 @@ export default withOnyx<Props, OnyxProps>({
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
         selector: (value: OnyxEntry<Report>) => '',
-        // selector: (value: OnyxEntry<Account>) => false, // FIXME: don't raises an error - incorrect
+        // selector: (value: OnyxEntry<Account>) => '', // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithStringCollectionRecordKey: {
