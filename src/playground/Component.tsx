@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable rulesdir/prefer-actions-set-data */
 /* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
-import Onyx, {OnyxCollectionEntries, OnyxEntry, withOnyx} from 'react-native-onyx';
+import Onyx, {OnyxCollection, OnyxEntry, withOnyx} from 'react-native-onyx';
 import ONYXKEYS, {Account, Report} from '../ONYXKEYS';
 
 type OnyxProps = {
@@ -12,13 +12,13 @@ type OnyxProps = {
     onyxPropWithFunctionKey: OnyxEntry<Account>;
     onyxPropWithFunctionKeyAndFunctionSelector: string;
 
-    onyxPropWithStringCollectionKey: OnyxCollectionEntries<Report>;
+    onyxPropWithStringCollectionKey: OnyxCollection<Report>;
     onyxPropWithStringCollectionKeyAndFunctionSelector: string;
 
     onyxPropWithStringCollectionRecordKey: OnyxEntry<Report>;
     onyxPropWithStringCollectionRecordKeyAndFunctionSelector: boolean;
 
-    onyxPropWithFunctionCollectionKey: OnyxCollectionEntries<Report>;
+    onyxPropWithFunctionCollectionKey: OnyxCollection<Report>;
     onyxPropWithFunctionCollectionKeyAndFunctionSelector: boolean;
 
     onyxPropWithFunctionCollectionRecordKey: OnyxEntry<Report>;
