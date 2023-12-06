@@ -1,23 +1,17 @@
-import PropTypes from 'prop-types';
-import React, {forwardRef, useContext} from 'react';
-import refPropTypes from '@components/refPropTypes';
+import React, {ForwardedRef, forwardRef, useContext} from 'react';
 import TextInput from '@components/TextInput';
 import FormContext from './FormContext';
 
-const propTypes = {
-    InputComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.elementType]).isRequired,
-    inputID: PropTypes.string.isRequired,
-    valueType: PropTypes.string,
-    forwardedRef: refPropTypes,
+type ValueType = 'string' | 'boolean' | 'date';
+
+type InputWrapperProps<T extends React.ElementType> = React.ComponentProps<T> & {
+    InputComponent: T;
+    inputID: string;
+    valueType?: ValueType;
 };
 
-const defaultProps = {
-    forwardedRef: undefined,
-    valueType: 'string',
-};
-
-function InputWrapper(props) {
-    const {InputComponent, inputID, forwardedRef, ...rest} = props;
+function InputWrapper<T extends React.ElementType>({InputComponent, inputID, valueType = 'string', ...rest}: InputWrapperProps<T>, ref: ForwardedRef<T>) {
+    // @ts-expect-error TODO: Remove this when FormContext is migrated to TS.
     const {registerInput} = useContext(FormContext);
     // There are inputs that dont have onBlur methods, to simulate the behavior of onBlur in e.g. checkbox, we had to
     // use different methods like onPress. This introduced a problem that inputs that have the onBlur method were
@@ -25,21 +19,9 @@ function InputWrapper(props) {
     // For now this side effect happened only in `TextInput` components.
     const shouldSetTouchedOnBlurOnly = InputComponent === TextInput;
     // eslint-disable-next-line react/jsx-props-no-spreading
-    return <InputComponent {...registerInput(inputID, {ref: forwardedRef, shouldSetTouchedOnBlurOnly, ...rest})} />;
+    return <InputComponent {...registerInput(inputID, {ref, shouldSetTouchedOnBlurOnly, valueType, ...rest})} />;
 }
 
-InputWrapper.propTypes = propTypes;
-InputWrapper.defaultProps = defaultProps;
 InputWrapper.displayName = 'InputWrapper';
 
-const InputWrapperWithRef = forwardRef((props, ref) => (
-    <InputWrapper
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        forwardedRef={ref}
-    />
-));
-
-InputWrapperWithRef.displayName = 'InputWrapperWithRef';
-
-export default InputWrapperWithRef;
+export default forwardRef(InputWrapper);
