@@ -1,6 +1,5 @@
-import type {RouteProp} from '@react-navigation/native';
-import React, {useEffect, useMemo, useRef} from 'react';
 import type {ReactNode} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {View} from 'react-native';
 import {withOnyx} from 'react-native-onyx';
 import type {OnyxEntry} from 'react-native-onyx/lib/types';
@@ -16,8 +15,8 @@ import Navigation from '@libs/Navigation/Navigation';
 import * as PolicyUtils from '@libs/PolicyUtils';
 import * as BankAccounts from '@userActions/BankAccounts';
 import ONYXKEYS from '@src/ONYXKEYS';
-import ROUTES from '@src/ROUTES';
 import type {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 import type {Policy, ReimbursementAccount, User} from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {WithPolicyAndFullscreenLoadingProps} from './withPolicyAndFullscreenLoading';
@@ -38,9 +37,6 @@ type WorkspacePageWithSectionsProps = WithPolicyAndFullscreenLoadingProps &
 
         /** The text to display in the header */
         headerText: string;
-
-        /** The route object passed to this page from the navigator */
-        route: RouteProp<{params: {policyID: string}}>;
 
         /** Main content of the page */
         children: (hasVBA?: boolean, policyID?: string, isUsingECard?: boolean) => ReactNode;
@@ -92,7 +88,7 @@ function WorkspacePageWithSections({
     const isLoading = reimbursementAccount?.isLoading ?? true;
     const achState = reimbursementAccount?.achData?.state ?? '';
     const isUsingECard = user?.isUsingExpensifyCard ?? false;
-    const policyID = route.params.policyID;
+    const policyID = route.params?.policyID ?? '';
     const policyName = policy?.name;
     const hasVBA = achState === BankAccount.STATE.OPEN;
     const content = children(hasVBA, policyID, isUsingECard);
