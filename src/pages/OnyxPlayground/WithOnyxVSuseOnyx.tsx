@@ -84,6 +84,9 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const inexistentCollection = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT);
     const [inexistentCollectionValue] = inexistentCollection;
 
+    const inexistentCollectionWithSelector = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {selector: (entry) => entry?.id});
+    const [inexistentCollectionWithSelectorValue] = inexistentCollectionWithSelector;
+
     const policies = useOnyx(ONYXKEYS.COLLECTION.POLICY);
     const [policiesValue] = policies;
 
@@ -118,6 +121,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook account', account);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook inexistentCollection', inexistentCollection);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHook inexistentCollectionWithSelector', inexistentCollectionWithSelector);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policies', policies);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policy', policy);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policy2', policy2);
