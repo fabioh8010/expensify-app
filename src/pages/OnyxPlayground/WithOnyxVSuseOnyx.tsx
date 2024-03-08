@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import React, {useState} from 'react';
-import type {OnyxCollection, OnyxEntry, UseOnyxData} from 'react-native-onyx';
+import type {OnyxCollection, OnyxEntry, UseOnyxResult} from 'react-native-onyx';
 import {useOnyx, withOnyx} from 'react-native-onyx';
 import * as Expensicons from '@components/Icon/Expensicons';
 import MenuItem from '@components/MenuItem';
@@ -11,7 +11,7 @@ import type {Account, Policy} from '@src/types/onyx';
 
 type PartialPolicy = Pick<Policy, 'id' | 'name'>;
 
-function SubRenderTest({policy}: {policy: UseOnyxData<`policy_${string}`, OnyxEntry<Policy>>}) {
+function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, OnyxEntry<Policy>>}) {
     console.log('OnyxPlayground [App] SubRenderTest policy', policy);
     return null;
 }

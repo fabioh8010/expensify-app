@@ -2,6 +2,7 @@
 import React from 'react';
 import HeaderPageLayout from '@components/HeaderPageLayout';
 import AllowStaleDataTest from './AllowStaleDataTest';
+import InitWithStoredValuesTest from './InitWithStoredValuesTest';
 import PolicyIDToggle from './PolicyIDToggle';
 import WithOnyxVSuseOnyx from './WithOnyxVSuseOnyx';
 
@@ -16,6 +17,8 @@ function OnyxPlaygroundPage() {
             <PolicyIDToggle />
 
             <AllowStaleDataTest />
+
+            <InitWithStoredValuesTest />
         </HeaderPageLayout>
     );
 }
