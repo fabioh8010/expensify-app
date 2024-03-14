@@ -80,6 +80,53 @@ function PolicyIDToggle({policyID}: PolicyIDToggleProps) {
                     Onyx.set(ONYXKEYS.POLICY_ID, 'inexistent2');
                 }}
             />
+            <MenuItem
+                wrapperStyle={styles.mb4}
+                title="Add entry to INEXISTENT collection"
+                icon={Expensicons.Send}
+                numberOfLinesTitle={2}
+                onPress={() => {
+                    const id = String(Math.random());
+                    // Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, {id});
+                    Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${id}`, {id});
+                }}
+            />
+            <MenuItem
+                wrapperStyle={styles.mb4}
+                title="Clear INEXISTENT collection"
+                icon={Expensicons.Send}
+                numberOfLinesTitle={2}
+                onPress={() => {
+                    Onyx.set(ONYXKEYS.COLLECTION.INEXISTENT, null);
+                }}
+            />
+            <MenuItem
+                wrapperStyle={styles.mb4}
+                title="Test merges with undefined"
+                icon={Expensicons.Send}
+                numberOfLinesTitle={2}
+                onPress={() => {
+                    // 1. Merge key with `undefined` at root level.
+                    // Doesn't produce any results ✅
+                    // TS complains about it ✅
+                    // Onyx.merge(ONYXKEYS.POLICY_ID, undefined);
+
+                    // 2. Merge collection key with `undefined` at root level.
+                    // Doesn't produce any results ✅
+                    // TS complains about it ✅
+                    // Onyx.merge(ONYXKEYS.COLLECTION.INEXISTENT, undefined);
+
+                    // 3. Merge collection key with `undefined` at property level.
+                    // Doesn't produce any results ✅
+                    // TS complains about it ✅
+                    // Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, undefined);
+
+                    // 4. Merge collection key with `undefined` at record level.
+                    // Doesn't produce any results ✅
+                    // TS DOESN'T complain about it ❌
+                    // Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, {id: undefined});
+                }}
+            />
         </>
     );
 }

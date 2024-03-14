@@ -466,7 +466,7 @@ type OnyxFormDraftValuesMapping = {
 };
 
 type OnyxCollectionValuesMapping = {
-    [ONYXKEYS.COLLECTION.INEXISTENT]: {id: string};
+    [ONYXKEYS.COLLECTION.INEXISTENT]: {id: string, prop2: string, prop3: string};
     [ONYXKEYS.COLLECTION.DOWNLOAD]: OnyxTypes.Download;
     [ONYXKEYS.COLLECTION.POLICY]: OnyxTypes.Policy;
     [ONYXKEYS.COLLECTION.POLICY_DRAFTS]: OnyxTypes.Policy;

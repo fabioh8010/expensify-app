@@ -11,7 +11,7 @@ import type {Account, Policy} from '@src/types/onyx';
 
 type PartialPolicy = Pick<Policy, 'id' | 'name'>;
 
-function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, OnyxEntry<Policy>>}) {
+function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, OnyxEntry<Policy>> | OnyxEntry<Policy>}) {
     console.log('OnyxPlayground [App] SubRenderTest policy', policy);
     return null;
 }
@@ -66,11 +66,7 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policiesWithSelector', policiesWithSelector);
     console.groupEnd();
 
-    return (
-        <>
-            <SubRenderTest policy={policy} />
-        </>
-    );
+    return <SubRenderTest policy={policy} />;
 });
 
 type ComponentWithOnyxHookProps = {
@@ -130,11 +126,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policiesWithSelector', policiesWithSelector);
     console.groupEnd();
 
-    return (
-        <>
-            <SubRenderTest policy={policy} />
-        </>
-    );
+    return <SubRenderTest policy={policy} />;
 }
 
 type WithOnyxVSuseOnyxProps = {
