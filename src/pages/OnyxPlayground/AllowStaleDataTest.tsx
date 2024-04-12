@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 import React, {useState} from 'react';
 import type {OnyxEntry} from 'react-native-onyx';
-import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
+import {useOnyx, withOnyx} from 'react-native-onyx';
 import * as Expensicons from '@components/Icon/Expensicons';
 import MenuItem from '@components/MenuItem';
 import Text from '@components/Text';
@@ -47,12 +47,12 @@ function AllowStaleDataTest() {
                 numberOfLinesTitle={2}
                 onPress={() => {
                     if (!shouldRender) {
-                        const policyID = Onyx.tryGetCachedValue(ONYXKEYS.POLICY_ID);
-                        const newPolicyID = policyID === '1576B20B2BA20523' ? '4EB3958A3E59A354' : '1576B20B2BA20523';
-                        // const newPolicyID = policyID === '1576B20B2BA20523' ? 'inexistent' : '1576B20B2BA20523';
-                        console.log(`OnyxPlayground [App] AllowStaleDataUseOnyx policyID '${policyID}' -> '${newPolicyID}'`);
-                        Onyx.merge(ONYXKEYS.POLICY_ID, newPolicyID);
-                        // Onyx.merge(ONYXKEYS.POLICY_ID, policyID === '1576B20B2BA20523' ? 'sasasasasa' : '1576B20B2BA20523');
+                        // const policyID = Onyx.tryGetCachedValue(ONYXKEYS.POLICY_ID);
+                        // const newPolicyID = policyID === '1576B20B2BA20523' ? '4EB3958A3E59A354' : '1576B20B2BA20523';
+                        // // const newPolicyID = policyID === '1576B20B2BA20523' ? 'inexistent' : '1576B20B2BA20523';
+                        // console.log(`OnyxPlayground [App] AllowStaleDataUseOnyx policyID '${policyID}' -> '${newPolicyID}'`);
+                        // Onyx.merge(ONYXKEYS.POLICY_ID, newPolicyID);
+                        // // Onyx.merge(ONYXKEYS.POLICY_ID, policyID === '1576B20B2BA20523' ? 'sasasasasa' : '1576B20B2BA20523');
                     }
 
                     setShouldRender(!shouldRender);

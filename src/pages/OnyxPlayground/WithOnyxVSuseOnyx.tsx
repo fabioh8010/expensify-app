@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable no-console */
 import React, {useState} from 'react';
 import type {OnyxCollection, OnyxEntry, UseOnyxResult} from 'react-native-onyx';
@@ -19,7 +21,7 @@ function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, Onyx
 type ComponentWithOnyxHOCOnyxProps = {
     account: OnyxEntry<Account>;
 
-    inexistentCollection: OnyxCollection<{id: string}>;
+    inexistentCollection: OnyxCollection<{id: string; prop2: string; prop3: string}>;
 
     policies: OnyxCollection<Policy>;
 
@@ -53,7 +55,7 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     },
     policiesWithSelector: {
         key: ONYXKEYS.COLLECTION.POLICY,
-        selector: (policy) => policy?.name as unknown as OnyxCollection<PartialPolicy>,
+        selector: (policy) => ({id: policy?.id ?? '', name: policy?.name ?? ''}),
     },
 })(({policyID, account, inexistentCollection, policies, policy, sessionEmail, policiesWithSelector}) => {
     console.group('OnyxPlayground [App] ComponentWithOnyxHOC');

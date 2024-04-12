@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable @typescript-eslint/naming-convention */
 
 /* eslint-disable react/no-unused-prop-types */
@@ -37,7 +39,7 @@ type OnyxTSTestProps = OnyxTSTestOnyxProps & {
     prop2?: number;
 };
 
-function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
+function OnyxTSTest({reportId, prop2 = 0}: OnyxTSTestProps) {
     // const keys = Onyx.getAllKeys();
 
     // const isSafeEvictionKey = Onyx.isSafeEvictionKey(ONYXKEYS.ACCOUNT);
@@ -59,7 +61,7 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
                 return;
             }
 
-            console.log(value.activePolicyID);
+            console.log(value.primaryLogin);
         },
     });
 
@@ -87,6 +89,19 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
         waitForCollectionCallback: true,
     });
 
+    Onyx.connect({
+        key: ONYXKEYS.COLLECTION.REPORT,
+        callback: (value, key) => {
+            if (!value) {
+                return;
+            }
+
+            console.log(value.policyID);
+            console.log(value.policyID);
+        },
+        waitForCollectionCallback: false,
+    });
+
     // raises an error, collection member key - incorrect
     // Onyx.connect({
     //     key: `${ONYXKEYS.COLLECTION.REPORT}${`report1`}`,
@@ -106,21 +121,21 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
     Onyx.disconnect(1000, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`);
     // Onyx.disconnect(1000, 'wrong key'); // raises an error, wrong key - correct
 
-    Onyx.set(ONYXKEYS.ACCOUNT, {activePolicyID: 'account1'});
+    Onyx.set(ONYXKEYS.ACCOUNT, {primaryLogin: 'account1'});
     Onyx.set(ONYXKEYS.IS_LOADING_PAYMENT_METHODS, true);
     Onyx.set(ONYXKEYS.NVP_PREFERRED_LOCALE, null);
     Onyx.set(`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`, {isDownloading: true});
     // Onyx.set(ONYXKEYS.ACCOUNT, 'wrong value'); // raises an error, wrong value - correct
 
     Onyx.multiSet({
-        [ONYXKEYS.ACCOUNT]: {activePolicyID: 'id2'},
+        [ONYXKEYS.ACCOUNT]: {primaryLogin: 'id2'},
         [ONYXKEYS.NVP_PREFERRED_LOCALE]: null,
         [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {isDownloading: true},
         [`${ONYXKEYS.COLLECTION.REPORT}${'report1'}` as const]: {reportID: 'download_url'},
         // [ONYXKEYS.ACTIVE_CLIENTS]: 1, // raises an error, wrong value - correct
     });
 
-    Onyx.merge(ONYXKEYS.ACCOUNT, {activePolicyID: 'user name'});
+    Onyx.merge(ONYXKEYS.ACCOUNT, {primaryLogin: 'user name'});
     Onyx.merge(`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`, {});
     Onyx.merge(`${ONYXKEYS.COLLECTION.REPORT}${'report'}`, {participants: {1: {role: 'admin'}}});
     // Onyx.merge(ONYXKEYS.ACCOUNT, 'something'); // raises an error, wrong value - correct
@@ -152,7 +167,7 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
         {
             onyxMethod: Onyx.METHOD.MERGE,
             key: ONYXKEYS.ACCOUNT,
-            value: {activePolicyID: 'id1'},
+            value: {primaryLogin: 'id1'},
         },
         {
             onyxMethod: Onyx.METHOD.MERGE,
@@ -167,7 +182,7 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
         // {
         //     onyxMethod: Onyx.METHOD.MERGE,
         //     key: ONYXKEYS.IS_LOADING_PAYMENT_METHODS,
-        //     value: {activePolicyID: 'id1'}, // raises an error, wrong value - correct
+        //     value: {primaryLogin: 'id1'}, // raises an error, wrong value - correct
         // },
         {
             onyxMethod: Onyx.METHOD.MERGE,
@@ -209,7 +224,7 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
         {
             onyxMethod: Onyx.METHOD.MERGE,
             key: ONYXKEYS.ACCOUNT,
-            value: {activePolicyID: 'id1'},
+            value: {primaryLogin: 'id1'},
         },
         {
             onyxMethod: Onyx.METHOD.MERGE_COLLECTION,
@@ -226,13 +241,12 @@ function OnyxTSTest({reportId, prop2 = true}: OnyxTSTestProps) {
     Onyx.init({
         keys: ONYXKEYS,
         initialKeyStates: {
-            [ONYXKEYS.ACCOUNT]: {activePolicyID: 'id1'},
+            [ONYXKEYS.ACCOUNT]: {primaryLogin: 'id1'},
             [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: false,
             [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}` as const]: {isDownloading: true},
             // [ONYXKEYS.ACTIVE_CLIENTS]: 'wrong value', // raises an error, wrong value - correct
         },
         safeEvictionKeys: [ONYXKEYS.ACCOUNT, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`],
-        // captureMetrics: true,
         maxCachedKeysCount: 1000,
         debugSetState: true,
         shouldSyncMultipleInstances: true,
@@ -275,8 +289,8 @@ export default withOnyx<OnyxTSTestProps, OnyxTSTestOnyxProps>({
     },
     onyxPropWithStringKeyAndFunctionSelector: {
         key: ONYXKEYS.ACCOUNT,
-        selector: (value) => value?.activePolicyID ?? '',
-        // selector: (value) => value?.activePolicyID ?? 1, // raises an error - correct
+        selector: (value) => value?.primaryLogin ?? '',
+        // selector: (value) => value?.primaryLogin ?? 1, // raises an error - correct
     },
 
     onyxPropWithFunctionKey: {
@@ -286,8 +300,8 @@ export default withOnyx<OnyxTSTestProps, OnyxTSTestOnyxProps>({
     onyxPropWithFunctionKeyAndFunctionSelector: {
         key: ({reportId}) => ONYXKEYS.ACCOUNT,
         // key: ({reportId}) => ONYXKEYS.IS_LOADING_PAYMENT_METHODS, // raises an error - correct
-        selector: (value: OnyxEntry<Account>) => value?.activePolicyID ?? '',
-        // selector: (value: OnyxEntry<Account>) => value?.activePolicyID ?? 1, // raises an error - correct
+        selector: (value: OnyxEntry<Account>) => value?.primaryLogin ?? '',
+        // selector: (value: OnyxEntry<Account>) => value?.primaryLogin ?? 1, // raises an error - correct
         // selector: (value: OnyxEntry<Report>) => value?.reportID ?? '', // raises an error - correct
     },
 
@@ -298,7 +312,7 @@ export default withOnyx<OnyxTSTestProps, OnyxTSTestOnyxProps>({
     onyxPropWithStringCollectionKeyAndFunctionSelector: {
         key: ONYXKEYS.COLLECTION.REPORT,
         selector: (value) => value?.reportID ?? '',
-        // selector: (value: OnyxEntry<Account>) => value?.activePolicyID ?? '', // FIXME: don't raises an error - incorrect
+        // selector: (value: OnyxEntry<Account>) => value?.primaryLogin ?? '', // FIXME: don't raises an error - incorrect
     },
 
     onyxPropWithStringCollectionRecordKey: {
