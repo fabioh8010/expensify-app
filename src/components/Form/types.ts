@@ -4,16 +4,19 @@ import type {ValueOf} from 'type-fest';
 import type AddPlaidBankAccount from '@components/AddPlaidBankAccount';
 import type AddressSearch from '@components/AddressSearch';
 import type AmountForm from '@components/AmountForm';
+import type AmountPicker from '@components/AmountPicker';
 import type AmountTextInput from '@components/AmountTextInput';
 import type CheckboxWithLabel from '@components/CheckboxWithLabel';
 import type CountrySelector from '@components/CountrySelector';
 import type DatePicker from '@components/DatePicker';
+import type EmojiPickerButtonDropdown from '@components/EmojiPicker/EmojiPickerButtonDropdown';
 import type Picker from '@components/Picker';
 import type RadioButtons from '@components/RadioButtons';
 import type RoomNameInput from '@components/RoomNameInput';
 import type SingleChoiceQuestion from '@components/SingleChoiceQuestion';
-import type StatePicker from '@components/StatePicker';
+import type StateSelector from '@components/StateSelector';
 import type TextInput from '@components/TextInput';
+import type TextPicker from '@components/TextPicker';
 import type ValuePicker from '@components/ValuePicker';
 import type {MaybePhraseKey} from '@libs/Localize';
 import type BusinessTypePicker from '@pages/ReimbursementAccount/BusinessInfo/substeps/TypeBusiness/BusinessTypePicker';
@@ -24,9 +27,6 @@ import type {BaseForm} from '@src/types/form/Form';
 /**
  * This type specifies all the inputs that can be used with `InputWrapper` component. Make sure to update it
  * when adding new inputs or removing old ones.
- *
- * TODO: Add remaining inputs here once these components are migrated to Typescript:
- * EmojiPickerButtonDropdown
  */
 type ValidInputs =
     | typeof TextInput
@@ -38,12 +38,15 @@ type ValidInputs =
     | typeof CountrySelector
     | typeof AmountForm
     | typeof BusinessTypePicker
-    | typeof StatePicker
+    | typeof StateSelector
     | typeof RoomNameInput
     | typeof ValuePicker
     | typeof DatePicker
     | typeof RadioButtons
-    | typeof AddPlaidBankAccount;
+    | typeof AmountPicker
+    | typeof TextPicker
+    | typeof AddPlaidBankAccount
+    | typeof EmojiPickerButtonDropdown;
 
 type ValueTypeKey = 'string' | 'boolean' | 'date' | 'country';
 type ValueTypeMap = {
