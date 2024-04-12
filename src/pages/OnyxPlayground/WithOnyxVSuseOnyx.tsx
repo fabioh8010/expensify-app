@@ -21,6 +21,8 @@ function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, Onyx
 type ComponentWithOnyxHOCOnyxProps = {
     account: OnyxEntry<Account>;
 
+    testCondition: OnyxEntry<boolean>;
+
     inexistentCollection: OnyxCollection<{id: string; prop2: string; prop3: string}>;
 
     policies: OnyxCollection<Policy>;
@@ -40,6 +42,9 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     account: {
         key: ONYXKEYS.ACCOUNT,
     },
+    testCondition: {
+        key: ONYXKEYS.TEST_CONDITION,
+    },
     inexistentCollection: {
         key: ONYXKEYS.COLLECTION.INEXISTENT,
     },
@@ -57,10 +62,14 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
         key: ONYXKEYS.COLLECTION.POLICY,
         selector: (policy) => ({id: policy?.id ?? '', name: policy?.name ?? ''}),
     },
-})(({policyID, account, inexistentCollection, policies, policy, sessionEmail, policiesWithSelector}) => {
+})(({policyID, account, testCondition: testConditionOnyxValue, inexistentCollection, policies, policy, sessionEmail, policiesWithSelector}) => {
+    const testConditionValue = testConditionOnyxValue ?? true; // mimics default value assignment
+
     console.group('OnyxPlayground [App] ComponentWithOnyxHOC');
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policyID', policyID);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC account', account);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHOC testConditionOnyxValue', testConditionOnyxValue);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHOC testConditionValue', testConditionValue);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC inexistentCollection', inexistentCollection);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policies', policies);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policy', policy);
@@ -78,6 +87,10 @@ type ComponentWithOnyxHookProps = {
 function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const account = useOnyx(ONYXKEYS.ACCOUNT);
     const [accountValue] = account;
+
+    const testCondition = useOnyx(ONYXKEYS.TEST_CONDITION);
+    const [testConditionOnyxValue] = testCondition;
+    const testConditionValue = testConditionOnyxValue ?? true;
 
     const inexistentCollection = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT);
     const [inexistentCollectionValue] = inexistentCollection;
@@ -118,6 +131,9 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook account', account);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHook testCondition', testCondition);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHook testConditionOnyxValue', testConditionOnyxValue);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHook testConditionValue', testConditionValue);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook inexistentCollection', inexistentCollection);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook inexistentCollectionWithSelector', inexistentCollectionWithSelector);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policies', policies);

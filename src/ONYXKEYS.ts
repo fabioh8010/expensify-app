@@ -11,6 +11,8 @@ import type DeepValueOf from './types/utils/DeepValueOf';
 const ONYXKEYS = {
     POLICY_ID: 'policyID',
 
+    TEST_CONDITION: 'testCondition',
+
     /** Holds information about the users account that is logging in */
     ACCOUNT: 'account',
 
@@ -557,6 +559,7 @@ type OnyxCollectionValuesMapping = {
 
 type OnyxValuesMapping = {
     [ONYXKEYS.POLICY_ID]: string;
+    [ONYXKEYS.TEST_CONDITION]: boolean;
     [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
     [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
     [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;

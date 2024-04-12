@@ -102,6 +102,25 @@ function PolicyIDToggle({policyID}: PolicyIDToggleProps) {
             />
             <MenuItem
                 wrapperStyle={styles.mb4}
+                title="Set TEST_CONDITION value"
+                icon={Expensicons.Send}
+                numberOfLinesTitle={2}
+                onPress={() => {
+                    // Onyx.merge(ONYXKEYS.TEST_CONDITION, true);
+                    Onyx.merge(ONYXKEYS.TEST_CONDITION, false);
+                }}
+            />
+            <MenuItem
+                wrapperStyle={styles.mb4}
+                title="Clear TEST_CONDITION value"
+                icon={Expensicons.Send}
+                numberOfLinesTitle={2}
+                onPress={() => {
+                    Onyx.set(ONYXKEYS.TEST_CONDITION, null);
+                }}
+            />
+            <MenuItem
+                wrapperStyle={styles.mb4}
                 title="Test merges with undefined"
                 icon={Expensicons.Send}
                 numberOfLinesTitle={2}
@@ -110,17 +129,14 @@ function PolicyIDToggle({policyID}: PolicyIDToggleProps) {
                     // Doesn't produce any results ✅
                     // TS complains about it ✅
                     // Onyx.merge(ONYXKEYS.POLICY_ID, undefined);
-
                     // 2. Merge collection key with `undefined` at root level.
                     // Doesn't produce any results ✅
                     // TS complains about it ✅
                     // Onyx.merge(ONYXKEYS.COLLECTION.INEXISTENT, undefined);
-
                     // 3. Merge collection key with `undefined` at property level.
                     // Doesn't produce any results ✅
                     // TS complains about it ✅
                     // Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, undefined);
-
                     // 4. Merge collection key with `undefined` at record level.
                     // Doesn't produce any results ✅
                     // TS DOESN'T complain about it ❌
