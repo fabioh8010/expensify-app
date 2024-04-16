@@ -128,6 +128,8 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     });
     const [policiesWithSelectorValue] = policiesWithSelector;
 
+    const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
+
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook account', account);

@@ -218,6 +218,45 @@ function OnyxTSTest({reportId, prop2 = 0}: OnyxTSTestProps) {
                 // [`${ONYXKEYS.COLLECTION.DOWNLOAD}${'report2'}` as const]: {isDownloading: true}, // raises an error - correct
             },
         },
+
+        // 1. Set / Merge key with `undefined` at root level.
+        // Doesn't produce any results ✅
+        // TS complains about it ✅
+        // {
+        //     // onyxMethod: Onyx.METHOD.SET,
+        //     onyxMethod: Onyx.METHOD.MERGE,
+        //     key: ONYXKEYS.ACCOUNT,
+        //     value: undefined,
+        // },
+
+        // 2. Set / Merge collection key with `undefined` at root level.
+        // Doesn't produce any results ✅
+        // TS complains about it ✅
+        // {
+        //     // onyxMethod: Onyx.METHOD.SET,
+        //     onyxMethod: Onyx.METHOD.MERGE,
+        //     key: ONYXKEYS.COLLECTION.DOWNLOAD,
+        //     value: undefined,
+        // },
+
+        // 3. Set / Merge collection key with `undefined` at record level.
+        // Doesn't produce any results ✅
+        // TS complains about it ✅
+        // {
+        //     // onyxMethod: Onyx.METHOD.SET,
+        //     onyxMethod: Onyx.METHOD.MERGE,
+        //     key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`,
+        //     value: undefined,
+        // },
+
+        // 4. Merge collection key with `undefined` at property level.
+        // Doesn't produce any results ✅
+        // TS DOESN'T complain about it ✅
+        {
+            onyxMethod: Onyx.METHOD.MERGE,
+            key: `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`,
+            value: {isDownloading: undefined},
+        },
     ]);
 
     const optimisticData: OnyxUpdate[] = [
@@ -259,19 +298,22 @@ function OnyxTSTest({reportId, prop2 = 0}: OnyxTSTestProps) {
 
     // Onyx.setMemoryOnlyKeys([ONYXKEYS.ACCOUNT, ONYXKEYS.COLLECTION.DOWNLOAD, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`]);
 
-    // 1. Merge key with `undefined` at root level.
+    // 1. Set / Merge key with `undefined` at root level.
     // Doesn't produce any results ✅
     // TS complains about it ✅
+    // Onyx.set(ONYXKEYS.POLICY_ID, undefined);
     // Onyx.merge(ONYXKEYS.POLICY_ID, undefined);
 
-    // 2. Merge collection key with `undefined` at root level.
+    // 2. Set / Merge collection key with `undefined` at root level.
     // Doesn't produce any results ✅
     // TS complains about it ✅
+    // Onyx.set(ONYXKEYS.COLLECTION.INEXISTENT, undefined);
     // Onyx.merge(ONYXKEYS.COLLECTION.INEXISTENT, undefined);
 
-    // 3. Merge collection key with `undefined` at record level.
+    // 3. Set / Merge collection key with `undefined` at record level.
     // Doesn't produce any results ✅
     // TS complains about it ✅
+    // Onyx.set(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, undefined);
     // Onyx.merge(`${ONYXKEYS.COLLECTION.INEXISTENT}${'id1'}`, undefined);
 
     // 4. Merge collection key with `undefined` at property level.
