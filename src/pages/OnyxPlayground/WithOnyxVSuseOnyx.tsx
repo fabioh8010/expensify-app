@@ -1,3 +1,5 @@
+/* eslint-disable arrow-body-style */
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable no-console */
@@ -29,6 +31,8 @@ type ComponentWithOnyxHOCOnyxProps = {
 
     policy: OnyxEntry<Policy>;
 
+    policy2: OnyxEntry<PartialPolicy>;
+
     sessionEmail: OnyxEntry<string>;
 
     policiesWithSelector: OnyxCollection<PartialPolicy>;
@@ -54,15 +58,31 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     policy: {
         key: ({policyID}) => `${ONYXKEYS.COLLECTION.POLICY}${policyID}`,
     },
+    policy2: {
+        key: ({policyID}) => `${ONYXKEYS.COLLECTION.POLICY}${policyID}`,
+        selector: (selectedPolicy: OnyxEntry<Policy>) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHOC '${ONYXKEYS.COLLECTION.POLICY}policy2' selector`, selectedPolicy);
+            return {
+                id: selectedPolicy?.id ?? '',
+                name: selectedPolicy?.name ?? '',
+            };
+        },
+    },
     sessionEmail: {
         key: ONYXKEYS.SESSION,
-        selector: (session) => session?.email ?? '',
+        selector: (session) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHOC '${ONYXKEYS.SESSION}' selector`, session);
+            return session?.email ?? '';
+        },
     },
     policiesWithSelector: {
         key: ONYXKEYS.COLLECTION.POLICY,
-        selector: (policy) => ({id: policy?.id ?? '', name: policy?.name ?? ''}),
+        selector: (policy) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHOC '${ONYXKEYS.COLLECTION.POLICY}' selector`, policy);
+            return {id: policy?.id ?? '', name: policy?.name ?? ''};
+        },
     },
-})(({policyID, account, testCondition: testConditionOnyxValue, inexistentCollection, policies, policy, sessionEmail, policiesWithSelector}) => {
+})(({policyID, account, testCondition: testConditionOnyxValue, inexistentCollection, policies, policy, policy2, sessionEmail, policiesWithSelector}) => {
     const testConditionValue = testConditionOnyxValue ?? true; // mimics default value assignment
 
     console.group('OnyxPlayground [App] ComponentWithOnyxHOC');
@@ -73,6 +93,7 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC inexistentCollection', inexistentCollection);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policies', policies);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policy', policy);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHOC policy2', policy2);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC sessionEmail', sessionEmail);
     console.log('OnyxPlayground [App] ComponentWithOnyxHOC policiesWithSelector', policiesWithSelector);
     console.groupEnd();
@@ -94,7 +115,12 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const inexistentCollection = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT);
     const [inexistentCollectionValue] = inexistentCollection;
 
-    const inexistentCollectionWithSelector = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {selector: (entry) => entry?.id});
+    const inexistentCollectionWithSelector = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {
+        selector: (entry) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.INEXISTENT}' selector`, entry);
+            return entry?.id;
+        },
+    });
     const [inexistentCollectionWithSelectorValue] = inexistentCollectionWithSelector;
 
     const policies = useOnyx(ONYXKEYS.COLLECTION.POLICY);
@@ -104,15 +130,21 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const [policyValue] = policy;
 
     const policy2 = useOnyx(`${ONYXKEYS.COLLECTION.POLICY}${policyID}`, {
-        selector: (selectedPolicy) => ({
-            id: selectedPolicy?.id,
-            name: selectedPolicy?.name,
-        }),
+        selector: (selectedPolicy) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.POLICY}${policyID}' selector`, selectedPolicy);
+            return {
+                id: selectedPolicy?.id,
+                name: selectedPolicy?.name,
+            };
+        },
     });
     const [policy2Value] = policy2;
 
     const currency = useOnyx(ONYXKEYS.CURRENCY_LIST, {
-        selector: (currencyList) => currencyList?.[policyID === '1576B20B2BA20523' ? 'EUR' : 'USD'],
+        selector: (currencyList) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.CURRENCY_LIST}' selector`, currencyList);
+            return currencyList?.[policyID === '1576B20B2BA20523' ? 'EUR' : 'USD'];
+        },
     });
     const [currencyValue] = currency;
 
@@ -120,15 +152,18 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const [sessionEmailValue] = sessionEmail;
 
     const policiesWithSelector = useOnyx(ONYXKEYS.COLLECTION.POLICY, {
-        selector: (selectedPolicy) => ({
-            id: selectedPolicy?.id,
-            name: selectedPolicy?.name,
-        }),
+        selector: (selectedPolicy) => {
+            // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.POLICY}' selector`, selectedPolicy);
+            return {
+                id: selectedPolicy?.id,
+                name: selectedPolicy?.name,
+            };
+        },
     });
     const [policiesWithSelectorValue] = policiesWithSelector;
 
     const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
-    const testDefaultValue = isLoadingApp
+    const testDefaultValue = isLoadingApp;
 
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
@@ -171,7 +206,7 @@ function WithOnyxVSuseOnyx({policyID}: WithOnyxVSuseOnyxProps) {
             {shouldRender && (
                 <>
                     <Text>WithOnyxVSuseOnyx</Text>
-                    <ComponentWithOnyxHOC policyID={policyID} />
+                    {/* <ComponentWithOnyxHOC policyID={policyID} /> */}
                     <ComponentWithOnyxHook policyID={policyID} />
                 </>
             )}

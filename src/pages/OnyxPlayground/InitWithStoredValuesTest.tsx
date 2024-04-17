@@ -1,7 +1,7 @@
 /* eslint-disable rulesdir/prefer-actions-set-data */
 
 /* eslint-disable no-console */
-import React, {useState} from 'react';
+import React from 'react';
 import type {OnyxEntry} from 'react-native-onyx';
 import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
 import * as Expensicons from '@components/Icon/Expensicons';

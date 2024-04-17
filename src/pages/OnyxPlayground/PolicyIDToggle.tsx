@@ -1,3 +1,5 @@
+/* eslint-disable rulesdir/prefer-onyx-connect-in-libs */
+
 /* eslint-disable rulesdir/prefer-actions-set-data */
 import React from 'react';
 import type {OnyxEntry} from 'react-native-onyx';
@@ -97,7 +99,17 @@ function PolicyIDToggle({policyID}: PolicyIDToggleProps) {
                 icon={Expensicons.Send}
                 numberOfLinesTitle={2}
                 onPress={() => {
-                    Onyx.set(ONYXKEYS.COLLECTION.INEXISTENT, null);
+                    const connection = Onyx.connect({
+                        key: ONYXKEYS.COLLECTION.INEXISTENT,
+                        callback: (data) => {
+                            Object.keys(data ?? {}).forEach((key) => {
+                                Onyx.set(key as `${typeof ONYXKEYS.COLLECTION.INEXISTENT}${string}`, null);
+                            });
+
+                            Onyx.disconnect(connection);
+                        },
+                        waitForCollectionCallback: true,
+                    });
                 }}
             />
             <MenuItem
