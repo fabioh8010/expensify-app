@@ -11,9 +11,10 @@ import MenuItem from '@components/MenuItem';
 import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {Account, Policy} from '@src/types/onyx';
+import type {Account, Beta, Currency, Policy} from '@src/types/onyx';
 
 function testNullUndefined<T>(value: OnyxEntry<T>) {}
+function testNullUndefinedCollection<T>(value: OnyxCollection<T>) {}
 
 type PartialPolicy = Pick<Policy, 'id' | 'name'>;
 
@@ -111,12 +112,30 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const account = useOnyx(ONYXKEYS.ACCOUNT);
     const [accountValue] = account;
     testNullUndefined<Account>(accountValue);
+    if (accountValue) {
+        // @ts-expect-error should error because result is read-only.
+        accountValue.accountExists = true;
+
+        let accountExists = accountValue.accountExists;
+        accountExists = true;
+    }
+
+    const betas = useOnyx(ONYXKEYS.BETAS);
+    const [betasValue] = betas;
+    testNullUndefined<Readonly<Beta[]>>(betasValue);
 
     const testCondition = useOnyx(ONYXKEYS.TEST_CONDITION);
     const [testConditionOnyxValue = true] = testCondition;
+    testNullUndefined<boolean>(testCondition[0]);
+    testNullUndefined<boolean>(testConditionOnyxValue);
 
     const inexistentCollection = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT);
     const [inexistentCollectionValue] = inexistentCollection;
+    testNullUndefinedCollection<{
+        id: string;
+        prop2: string;
+        prop3: string;
+    }>(inexistentCollectionValue);
 
     const inexistentCollectionWithSelector = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {
         selector: (entry) => {
@@ -128,9 +147,11 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
 
     const policies = useOnyx(ONYXKEYS.COLLECTION.POLICY);
     const [policiesValue] = policies;
+    testNullUndefinedCollection<Policy>(policiesValue);
 
     const policy = useOnyx(`${ONYXKEYS.COLLECTION.POLICY}${policyID}`);
     const [policyValue] = policy;
+    testNullUndefined<Policy>(policyValue);
 
     const policy2 = useOnyx(`${ONYXKEYS.COLLECTION.POLICY}${policyID}`, {
         selector: (selectedPolicy) => {
@@ -142,6 +163,13 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
         },
     });
     const [policy2Value] = policy2;
+    testNullUndefined<{
+        id: string | undefined;
+        name: string | undefined;
+    }>(policy2Value);
+
+    // @ts-expect-error should error because result is read-only.
+    policy2Value.id = 'something';
 
     const currency = useOnyx(ONYXKEYS.CURRENCY_LIST, {
         selector: (currencyList) => {
@@ -150,6 +178,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
         },
     });
     const [currencyValue] = currency;
+    testNullUndefined<Currency>(currencyValue);
 
     const sessionEmail = useOnyx(ONYXKEYS.SESSION, {selector: (value) => value?.email ?? ''});
     const [sessionEmailValue] = sessionEmail;
@@ -164,6 +193,10 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
         },
     });
     const [policiesWithSelectorValue] = policiesWithSelector;
+    testNullUndefinedCollection<{
+        id: string | undefined;
+        name: string | undefined;
+    }>(policiesWithSelectorValue);
 
     const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
     testNullUndefined<boolean>(isLoadingApp);
