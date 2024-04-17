@@ -13,9 +13,11 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Account, Policy} from '@src/types/onyx';
 
+function testNullUndefined<T>(value: OnyxEntry<T>) {}
+
 type PartialPolicy = Pick<Policy, 'id' | 'name'>;
 
-function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, OnyxEntry<Policy>> | OnyxEntry<Policy>}) {
+function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, Policy | undefined> | OnyxEntry<Policy>}) {
     console.log('OnyxPlayground [App] SubRenderTest policy', policy);
     return null;
 }
@@ -108,6 +110,7 @@ type ComponentWithOnyxHookProps = {
 function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const account = useOnyx(ONYXKEYS.ACCOUNT);
     const [accountValue] = account;
+    testNullUndefined<Account>(accountValue);
 
     const testCondition = useOnyx(ONYXKEYS.TEST_CONDITION);
     const [testConditionOnyxValue = true] = testCondition;
@@ -164,6 +167,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
 
     const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
     const testDefaultValue = isLoadingApp;
+    testNullUndefined<boolean>(isLoadingApp);
 
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
