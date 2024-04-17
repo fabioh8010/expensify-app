@@ -166,7 +166,6 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const [policiesWithSelectorValue] = policiesWithSelector;
 
     const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
-    const testDefaultValue = isLoadingApp;
     testNullUndefined<boolean>(isLoadingApp);
 
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
@@ -182,6 +181,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     console.log('OnyxPlayground [App] ComponentWithOnyxHook currency', currency);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook sessionEmail', sessionEmail);
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policiesWithSelector', policiesWithSelector);
+    console.log('OnyxPlayground [App] ComponentWithOnyxHook isLoadingApp', isLoadingApp);
     console.groupEnd();
 
     return <SubRenderTest policy={policy} />;
@@ -210,7 +210,7 @@ function WithOnyxVSuseOnyx({policyID}: WithOnyxVSuseOnyxProps) {
             {shouldRender && (
                 <>
                     <Text>WithOnyxVSuseOnyx</Text>
-                    {/* <ComponentWithOnyxHOC policyID={policyID} /> */}
+                    <ComponentWithOnyxHOC policyID={policyID} />
                     <ComponentWithOnyxHook policyID={policyID} />
                 </>
             )}
