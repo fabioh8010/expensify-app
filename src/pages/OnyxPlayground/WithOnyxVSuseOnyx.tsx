@@ -51,6 +51,8 @@ const ComponentWithOnyxHOC = withOnyx<ComponentWithOnyxHOCProps, ComponentWithOn
     },
     testCondition: {
         key: ONYXKEYS.TEST_CONDITION,
+        // selector: (v) => true,
+        // initialValue: 'initial value',
     },
     inexistentCollection: {
         key: ONYXKEYS.COLLECTION.INEXISTENT,
@@ -114,7 +116,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     testNullUndefined<Account>(accountValue);
     if (accountValue) {
         // @ts-expect-error should error because result is read-only.
-        accountValue.accountExists = true;
+        // accountValue.accountExists = true;
 
         let accountExists = accountValue.accountExists;
         accountExists = true;
@@ -142,6 +144,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
             // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.INEXISTENT}' selector`, entry);
             return entry?.id;
         },
+        initialValue: 'initial value',
     });
     const [inexistentCollectionWithSelectorValue] = inexistentCollectionWithSelector;
 
@@ -169,7 +172,7 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     }>(policy2Value);
 
     // @ts-expect-error should error because result is read-only.
-    policy2Value.id = 'something';
+    // policy2Value.id = 'something';
 
     const currency = useOnyx(ONYXKEYS.CURRENCY_LIST, {
         selector: (currencyList) => {
@@ -200,6 +203,16 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
 
     const [isLoadingApp = true] = useOnyx(ONYXKEYS.IS_LOADING_APP);
     testNullUndefined<boolean>(isLoadingApp);
+
+    // test initialValue
+    // const accountTest = useOnyx(ONYXKEYS.ACCOUNT, {initialValue: {}});
+    // const inexistentCollectionWithSelectorTest = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {
+    //     selector: (entry) => {
+    //         // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.INEXISTENT}' selector`, entry);
+    //         return entry?.id;
+    //     },
+    //     initialValue: '',
+    // });
 
     console.group('OnyxPlayground [App] ComponentWithOnyxHook');
     console.log('OnyxPlayground [App] ComponentWithOnyxHook policyID', policyID);
@@ -243,7 +256,7 @@ function WithOnyxVSuseOnyx({policyID}: WithOnyxVSuseOnyxProps) {
             {shouldRender && (
                 <>
                     <Text>WithOnyxVSuseOnyx</Text>
-                    <ComponentWithOnyxHOC policyID={policyID} />
+                    {/* <ComponentWithOnyxHOC policyID={policyID} /> */}
                     <ComponentWithOnyxHook policyID={policyID} />
                 </>
             )}
