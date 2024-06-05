@@ -115,9 +115,6 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const [accountValue] = account;
     testNullUndefined<Account>(accountValue);
     if (accountValue) {
-        // @ts-expect-error should error because result is read-only.
-        // accountValue.accountExists = true;
-
         let accountExists = accountValue.accountExists;
         accountExists = true;
     }
@@ -170,9 +167,6 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
         id: string | undefined;
         name: string | undefined;
     }>(policy2Value);
-
-    // @ts-expect-error should error because result is read-only.
-    // policy2Value.id = 'something';
 
     const currency = useOnyx(ONYXKEYS.CURRENCY_LIST, {
         selector: (currencyList) => {
