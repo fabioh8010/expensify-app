@@ -33,7 +33,7 @@ function ArchivedReportFooter({policyID, report, reportClosedAction, personalDet
     const styles = useThemeStyles();
     const {translate} = useLocalize();
 
-    const originalMessage = reportClosedAction?.actionName === CONST.REPORT.ACTIONS.TYPE.CLOSED ? reportClosedAction.originalMessage : null;
+    const originalMessage = ReportActionsUtils.isClosedAction(reportClosedAction) ? ReportActionsUtils.getOriginalMessage(reportClosedAction) : null;
     const archiveReason = originalMessage?.reason ?? CONST.REPORT.ARCHIVE_REASON.DEFAULT;
     const actorPersonalDetails = personalDetails?.[reportClosedAction?.actorAccountID ?? -1];
     let displayName = PersonalDetailsUtils.getDisplayNameOrDefault(actorPersonalDetails);
