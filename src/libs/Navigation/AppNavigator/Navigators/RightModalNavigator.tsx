@@ -149,6 +149,10 @@ function RightModalNavigator({navigation}: RightModalNavigatorProps) {
                         component={ModalStackNavigators.SearchReportModalStackNavigator}
                     />
                     <Stack.Screen
+                        name={SCREENS.RIGHT_MODAL.RESTRICTED_ACTION}
+                        component={ModalStackNavigators.RestrictedActionModalStackNavigator}
+                    />
+                    <Stack.Screen
                         name={SCREENS.RIGHT_MODAL.ONYX_PLAYGROUND}
                         component={ModalStackNavigators.OnyxPlaygroundModalStackNavigator}
                     />
