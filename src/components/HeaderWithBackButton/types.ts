@@ -80,6 +80,12 @@ type HeaderWithBackButtonProps = Partial<ChildrenProps> & {
     /** The anchor position of the menu */
     threeDotsAnchorPosition?: AnchorPosition;
 
+    /** Icon displayed on the right of the title */
+    threeDotsMenuIcon?: IconAsset;
+
+    /** The fill color to pass into the icon. */
+    threeDotsMenuIconFill?: string;
+
     /** Whether we should show a close button */
     shouldShowCloseButton?: boolean;
 
@@ -121,6 +127,9 @@ type HeaderWithBackButtonProps = Partial<ChildrenProps> & {
 
     /** Whether we should overlay the 3 dots menu */
     shouldOverlayDots?: boolean;
+
+    /** Whether we should display the button that opens new SearchRouter */
+    shouldDisplaySearchRouter?: boolean;
 
     /** 0 - 100 number indicating current progress of the progress bar */
     progressBarPercentage?: number;

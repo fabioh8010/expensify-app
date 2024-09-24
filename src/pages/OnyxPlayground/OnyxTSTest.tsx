@@ -116,11 +116,6 @@ function OnyxTSTest({reportId, prop2 = 0}: OnyxTSTestProps) {
     //     waitForCollectionCallback: true,
     // });
 
-    Onyx.disconnect(1000);
-    Onyx.disconnect(1000, ONYXKEYS.COUNTRY_CODE);
-    Onyx.disconnect(1000, `${ONYXKEYS.COLLECTION.DOWNLOAD}${'attachment1'}`);
-    // Onyx.disconnect(1000, 'wrong key'); // raises an error, wrong key - correct
-
     Onyx.set(ONYXKEYS.ACCOUNT, {primaryLogin: 'account1'});
     Onyx.set(ONYXKEYS.IS_LOADING_PAYMENT_METHODS, true);
     Onyx.set(ONYXKEYS.NVP_PREFERRED_LOCALE, null);
@@ -192,12 +187,12 @@ function OnyxTSTest({reportId, prop2 = 0}: OnyxTSTestProps) {
         {
             onyxMethod: Onyx.METHOD.SET,
             key: `${ONYXKEYS.COLLECTION.REPORT}${'report1'}`,
-            value: {reportID: 'id1', participants: {1: {role: 'admin', hidden: true}}},
+            value: {reportID: 'id1', participants: {1: {role: 'admin', notificationPreference: 'always'}}},
         },
         {
             onyxMethod: Onyx.METHOD.MERGE,
             key: `${ONYXKEYS.COLLECTION.REPORT}${'report2'}`,
-            value: {participants: {1: {role: 'admin', hidden: true}}},
+            value: {participants: {1: {role: 'admin'}}},
         },
         // {
         //     onyxMethod: Onyx.METHOD.MERGE_COLLECTION,

@@ -46,9 +46,13 @@ function ArchivedReportFooter({policyID, report, reportClosedAction, personalDet
         oldDisplayName = PersonalDetailsUtils.getDisplayNameOrDefault(personalDetails?.[oldAccountID ?? -1]);
     }
 
-    const shouldRenderHTML = archiveReason !== CONST.REPORT.ARCHIVE_REASON.DEFAULT;
+    const shouldRenderHTML = archiveReason !== CONST.REPORT.ARCHIVE_REASON.DEFAULT && archiveReason !== CONST.REPORT.ARCHIVE_REASON.BOOKING_END_DATE_HAS_PASSED;
 
     let policyName = ReportUtils.getPolicyName(report);
+
+    if (archiveReason === CONST.REPORT.ARCHIVE_REASON.INVOICE_RECEIVER_POLICY_DELETED) {
+        policyName = originalMessage?.receiverPolicyName ?? '';
+    }
 
     if (shouldRenderHTML) {
         oldDisplayName = lodashEscape(oldDisplayName);

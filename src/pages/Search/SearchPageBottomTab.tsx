@@ -1,52 +1,39 @@
-import type {StackScreenProps} from '@react-navigation/stack';
-import React, {useMemo} from 'react';
+import React from 'react';
+import {useOnyx} from 'react-native-onyx';
 import FullPageNotFoundView from '@components/BlockingViews/FullPageNotFoundView';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Search from '@components/Search';
-import useActiveRoute from '@hooks/useActiveRoute';
+import {useSearchContext} from '@components/Search/SearchContext';
+import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useLocalize from '@hooks/useLocalize';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
+import {turnOffMobileSelectionMode} from '@libs/actions/MobileSelectionMode';
 import Navigation from '@libs/Navigation/Navigation';
-import type {CentralPaneScreensParamList} from '@libs/Navigation/types';
+import type {AuthScreensParamList} from '@libs/Navigation/types';
+import * as SearchUtils from '@libs/SearchUtils';
 import TopBar from '@navigation/AppNavigator/createCustomBottomTabNavigator/TopBar';
-import CONST from '@src/CONST';
+import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import type {SearchQuery} from '@src/types/onyx/SearchResults';
-import SearchFilters from './SearchFilters';
+import SearchTypeMenu from './SearchTypeMenu';
 
-type SearchPageProps = StackScreenProps<CentralPaneScreensParamList, typeof SCREENS.SEARCH.CENTRAL_PANE>;
-
-const defaultSearchProps = {
-    query: '' as SearchQuery,
-    policyIDs: undefined,
-    sortBy: CONST.SEARCH.TABLE_COLUMNS.DATE,
-    sortOrder: CONST.SEARCH.SORT_ORDER.DESC,
-};
 function SearchPageBottomTab() {
     const {translate} = useLocalize();
-    const {isSmallScreenWidth} = useWindowDimensions();
-    const activeRoute = useActiveRoute();
+    const {shouldUseNarrowLayout} = useResponsiveLayout();
+    const activeCentralPaneRoute = useActiveCentralPaneRoute();
     const styles = useThemeStyles();
+    const {clearSelectedTransactions} = useSearchContext();
+    const [selectionMode] = useOnyx(ONYXKEYS.MOBILE_SELECTION_MODE);
+    const searchParams = activeCentralPaneRoute?.params as AuthScreensParamList[typeof SCREENS.SEARCH.CENTRAL_PANE];
+    const parsedQuery = SearchUtils.buildSearchQueryJSON(searchParams?.q);
+    const policyIDFromSearchQuery = parsedQuery && SearchUtils.getPolicyIDFromSearchQuery(parsedQuery);
+    const isActiveCentralPaneRoute = activeCentralPaneRoute?.name === SCREENS.SEARCH.CENTRAL_PANE;
+    const queryJSON = isActiveCentralPaneRoute ? parsedQuery : undefined;
+    const policyID = isActiveCentralPaneRoute ? policyIDFromSearchQuery : undefined;
 
-    const {
-        query: rawQuery,
-        policyIDs,
-        sortBy,
-        sortOrder,
-    } = useMemo(() => {
-        if (activeRoute?.name !== SCREENS.SEARCH.CENTRAL_PANE || !activeRoute.params) {
-            return defaultSearchProps;
-        }
-        return {...defaultSearchProps, ...activeRoute.params} as SearchPageProps['route']['params'];
-    }, [activeRoute]);
-
-    const query = rawQuery as SearchQuery;
-
-    const isValidQuery = Object.values(CONST.SEARCH.TAB).includes(query);
-
-    const handleOnBackButtonPress = () => Navigation.goBack(ROUTES.SEARCH.getRoute(CONST.SEARCH.TAB.ALL));
+    const handleOnBackButtonPress = () => Navigation.goBack(ROUTES.SEARCH_CENTRAL_PANE.getRoute({query: SearchUtils.buildCannedSearchQuery()}));
 
     return (
         <ScreenWrapper
@@ -55,24 +42,31 @@ function SearchPageBottomTab() {
             offlineIndicatorStyle={styles.mtAuto}
         >
             <FullPageNotFoundView
-                shouldShow={!isValidQuery}
+                shouldShow={!queryJSON}
                 onBackButtonPress={handleOnBackButtonPress}
                 shouldShowLink={false}
             >
-                <TopBar
-                    activeWorkspaceID={policyIDs}
-                    breadcrumbLabel={translate('common.search')}
-                    shouldDisplaySearch={false}
-                />
-                <SearchFilters query={query} />
-                {isSmallScreenWidth && (
-                    <Search
-                        policyIDs={policyIDs}
-                        query={query}
-                        sortBy={sortBy}
-                        sortOrder={sortOrder}
+                {!selectionMode?.isEnabled && queryJSON ? (
+                    <>
+                        <TopBar
+                            activeWorkspaceID={policyID}
+                            breadcrumbLabel={translate('common.search')}
+                            shouldDisplaySearch={false}
+                            shouldDisplaySearchRouter={shouldUseNarrowLayout}
+                            isCustomSearchQuery={shouldUseNarrowLayout && !SearchUtils.isCannedSearchQuery(queryJSON)}
+                        />
+                        <SearchTypeMenu queryJSON={queryJSON} />
+                    </>
+                ) : (
+                    <HeaderWithBackButton
+                        title={translate('common.selectMultiple')}
+                        onBackButtonPress={() => {
+                            clearSelectedTransactions();
+                            turnOffMobileSelectionMode();
+                        }}
                     />
                 )}
+                {shouldUseNarrowLayout && queryJSON && <Search queryJSON={queryJSON} />}
             </FullPageNotFoundView>
         </ScreenWrapper>
     );

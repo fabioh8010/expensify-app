@@ -2,12 +2,12 @@ import reject from 'lodash/reject';
 import Onyx from 'react-native-onyx';
 import type {OnyxUpdate} from 'react-native-onyx';
 import type {Phrase, PhraseParameters} from '@libs/Localize';
-import {getSortedTagKeys} from '@libs/PolicyUtils';
+import {getCustomUnitRate, getSortedTagKeys} from '@libs/PolicyUtils';
 import * as TransactionUtils from '@libs/TransactionUtils';
 import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {PolicyCategories, PolicyTagList, Transaction, TransactionViolation, ViolationName} from '@src/types/onyx';
+import type {Policy, PolicyCategories, PolicyTagLists, Transaction, TransactionViolation, ViolationName} from '@src/types/onyx';
 
 /**
  * Calculates tag out of policy and missing tag violations for the given transaction
@@ -16,7 +16,7 @@ function getTagViolationsForSingleLevelTags(
     updatedTransaction: Transaction,
     transactionViolations: TransactionViolation[],
     policyRequiresTags: boolean,
-    policyTagList: PolicyTagList,
+    policyTagList: PolicyTagLists,
 ): TransactionViolation[] {
     const policyTagKeys = Object.keys(policyTagList);
     const policyTagListName = policyTagKeys[0];
@@ -51,7 +51,7 @@ function getTagViolationsForSingleLevelTags(
 /**
  * Calculates missing tag violations for policies with dependent tags
  */
-function getTagViolationsForDependentTags(policyTagList: PolicyTagList, transactionViolations: TransactionViolation[], tagName: string) {
+function getTagViolationsForDependentTags(policyTagList: PolicyTagLists, transactionViolations: TransactionViolation[], tagName: string) {
     const tagViolations = [...transactionViolations];
 
     if (!tagName) {
@@ -79,7 +79,7 @@ function getTagViolationsForDependentTags(policyTagList: PolicyTagList, transact
 /**
  * Calculates missing tag violations for policies with independent tags
  */
-function getTagViolationForIndependentTags(policyTagList: PolicyTagList, transactionViolations: TransactionViolation[], transaction: Transaction) {
+function getTagViolationForIndependentTags(policyTagList: PolicyTagLists, transactionViolations: TransactionViolation[], transaction: Transaction) {
     const policyTagKeys = getSortedTagKeys(policyTagList);
     const selectedTags = transaction.tag?.split(CONST.COLON) ?? [];
     let newTransactionViolations = [...transactionViolations];
@@ -112,7 +112,7 @@ function getTagViolationForIndependentTags(policyTagList: PolicyTagList, transac
             const selectedTag = selectedTags[i];
             const tags = policyTagList[policyTagKeys[i]].tags;
             const isTagInPolicy = Object.values(tags).some((tag) => tag.name === selectedTag && !!tag.enabled);
-            if (!isTagInPolicy) {
+            if (!isTagInPolicy && selectedTag) {
                 newTransactionViolations.push({
                     name: CONST.VIOLATIONS.TAG_OUT_OF_POLICY,
                     type: CONST.VIOLATION_TYPES.VIOLATION,
@@ -139,7 +139,7 @@ function getTagViolationForIndependentTags(policyTagList: PolicyTagList, transac
 function getTagViolationsForMultiLevelTags(
     updatedTransaction: Transaction,
     transactionViolations: TransactionViolation[],
-    policyTagList: PolicyTagList,
+    policyTagList: PolicyTagLists,
     hasDependentTags: boolean,
 ): TransactionViolation[] {
     const tagViolations = [
@@ -165,9 +165,8 @@ const ViolationsUtils = {
     getViolationsOnyxData(
         updatedTransaction: Transaction,
         transactionViolations: TransactionViolation[],
-        policyRequiresTags: boolean,
-        policyTagList: PolicyTagList,
-        policyRequiresCategories: boolean,
+        policy: Policy,
+        policyTagList: PolicyTagLists,
         policyCategories: PolicyCategories,
         hasDependentTags: boolean,
     ): OnyxUpdate {
@@ -183,6 +182,7 @@ const ViolationsUtils = {
         let newTransactionViolations = [...transactionViolations];
 
         // Calculate client-side category violations
+        const policyRequiresCategories = !!policy.requiresCategory;
         if (policyRequiresCategories) {
             const hasCategoryOutOfPolicyViolation = transactionViolations.some((violation) => violation.name === 'categoryOutOfPolicy');
             const hasMissingCategoryViolation = transactionViolations.some((violation) => violation.name === 'missingCategory');
@@ -211,11 +211,16 @@ const ViolationsUtils = {
         }
 
         // Calculate client-side tag violations
+        const policyRequiresTags = !!policy.requiresTag;
         if (policyRequiresTags) {
             newTransactionViolations =
                 Object.keys(policyTagList).length === 1
                     ? getTagViolationsForSingleLevelTags(updatedTransaction, newTransactionViolations, policyRequiresTags, policyTagList)
                     : getTagViolationsForMultiLevelTags(updatedTransaction, newTransactionViolations, policyTagList, hasDependentTags);
+        }
+
+        if (updatedTransaction?.comment?.customUnit?.customUnitRateID && !!getCustomUnitRate(policy, updatedTransaction?.comment?.customUnit?.customUnitRateID)) {
+            newTransactionViolations = reject(newTransactionViolations, {name: CONST.VIOLATIONS.CUSTOM_UNIT_OUT_OF_POLICY});
         }
 
         return {
@@ -251,6 +256,7 @@ const ViolationsUtils = {
             maxAge = 0,
             tagName,
             taxName,
+            type,
         } = violation.data ?? {};
 
         switch (violation.name) {
@@ -288,7 +294,7 @@ const ViolationsUtils = {
             case 'missingTag':
                 return translate('violations.missingTag', {tagName});
             case 'modifiedAmount':
-                return translate('violations.modifiedAmount');
+                return translate('violations.modifiedAmount', {type, displayPercentVariance: violation.data?.displayPercentVariance});
             case 'modifiedDate':
                 return translate('violations.modifiedDate');
             case 'nonExpensiworksExpense':
