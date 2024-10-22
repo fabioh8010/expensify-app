@@ -1,7 +1,7 @@
 import {Str} from 'expensify-common';
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import type {ForwardedRef, RefAttributes} from 'react';
-import {withOnyx} from 'react-native-onyx';
+import type {ForwardedRef} from 'react';
+import {useOnyx} from 'react-native-onyx';
 import type {OnyxEntry} from 'react-native-onyx';
 import ColorSchemeWrapper from '@components/ColorSchemeWrapper';
 import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
@@ -26,6 +26,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import type {Account, Credentials, Locale} from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import isLoadingOnyxValue from '@src/types/utils/isLoadingOnyxValue';
 import ChooseSSOOrMagicCode from './ChooseSSOOrMagicCode';
 import EmailDeliveryFailurePage from './EmailDeliveryFailurePage';
 import LoginForm from './LoginForm';
@@ -37,7 +38,7 @@ import UnlinkLoginForm from './UnlinkLoginForm';
 import ValidateCodeForm from './ValidateCodeForm';
 import type {BaseValidateCodeFormRef} from './ValidateCodeForm/BaseValidateCodeForm';
 
-type SignInPageInnerOnyxProps = {
+type SignInPageInnerProps = {
     /** The details about the account that the user is signing in with */
     account: OnyxEntry<Account>;
 
@@ -49,9 +50,7 @@ type SignInPageInnerOnyxProps = {
 
     /** The user's preferred locale */
     preferredLocale: OnyxEntry<Locale>;
-};
 
-type SignInPageInnerProps = SignInPageInnerOnyxProps & {
     shouldEnableMaxHeight?: boolean;
 };
 
@@ -339,10 +338,25 @@ function SignInPage({credentials, account, activeClients = [], preferredLocale, 
 }
 
 type SignInPageProps = SignInPageInnerProps;
-type SignInPageOnyxProps = SignInPageInnerOnyxProps;
 const SignInPageWithRef = forwardRef(SignInPage);
 
 function SignInPageThemeWrapper(props: SignInPageProps, ref: ForwardedRef<SignInPageRef>) {
+    const [account, accountMetadata] = useOnyx(ONYXKEYS.ACCOUNT);
+    const [credentials, credentialsMetadata] = useOnyx(ONYXKEYS.CREDENTIALS);
+    /**
+      This variable is only added to make sure the component is re-rendered
+      whenever the activeClients change, so that we call the
+      ActiveClientManager.isClientTheLeader function
+      everytime the leader client changes.
+      We use that function to prevent repeating code that checks which client is the leader.
+    */
+    const [activeClients, activeClientsMetadata] = useOnyx(ONYXKEYS.ACTIVE_CLIENTS);
+    const [preferredLocale, preferredLocaleMetadata] = useOnyx(ONYXKEYS.NVP_PREFERRED_LOCALE);
+
+    if (isLoadingOnyxValue(accountMetadata, credentialsMetadata, activeClientsMetadata, preferredLocaleMetadata)) {
+        return null;
+    }
+
     return (
         <ThemeProvider theme={CONST.THEME.DARK}>
             <ThemeStylesProvider>
@@ -352,6 +366,10 @@ function SignInPageThemeWrapper(props: SignInPageProps, ref: ForwardedRef<SignIn
                         ref={ref}
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...props}
+                        account={account}
+                        credentials={credentials}
+                        activeClients={activeClients}
+                        preferredLocale={preferredLocale}
                     />
                 </ColorSchemeWrapper>
             </ThemeStylesProvider>
@@ -361,20 +379,6 @@ function SignInPageThemeWrapper(props: SignInPageProps, ref: ForwardedRef<SignIn
 
 SignInPageThemeWrapper.displayName = 'SignInPage';
 
-export default withOnyx<SignInPageProps & RefAttributes<SignInPageRef>, SignInPageOnyxProps>({
-    account: {key: ONYXKEYS.ACCOUNT},
-    credentials: {key: ONYXKEYS.CREDENTIALS},
-    /**
-      This variable is only added to make sure the component is re-rendered
-      whenever the activeClients change, so that we call the
-      ActiveClientManager.isClientTheLeader function
-      everytime the leader client changes.
-      We use that function to prevent repeating code that checks which client is the leader.
-    */
-    activeClients: {key: ONYXKEYS.ACTIVE_CLIENTS},
-    preferredLocale: {
-        key: ONYXKEYS.NVP_PREFERRED_LOCALE,
-    },
-})(forwardRef(SignInPageThemeWrapper));
+export default forwardRef(SignInPageThemeWrapper);
 
 export type {SignInPageRef};
