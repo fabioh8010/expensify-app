@@ -5,6 +5,7 @@ import AllowStaleDataTest from './AllowStaleDataTest';
 import InitWithStoredValuesTest from './InitWithStoredValuesTest';
 import OnyxConnectTest from './OnyxConnectTest';
 import PolicyIDToggle from './PolicyIDToggle';
+import UseOnyxDependencyTest from './UseOnyxDependencyTest';
 import WithOnyxVSuseOnyx from './WithOnyxVSuseOnyx';
 
 function OnyxPlaygroundPage() {
@@ -22,6 +23,8 @@ function OnyxPlaygroundPage() {
             <InitWithStoredValuesTest />
 
             <OnyxConnectTest />
+
+            <UseOnyxDependencyTest />
         </HeaderPageLayout>
     );
 }
