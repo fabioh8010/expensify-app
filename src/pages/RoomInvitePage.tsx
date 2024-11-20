@@ -48,7 +48,7 @@ function RoomInvitePage({
     report,
     policies,
     route: {
-        params: {role},
+        params: {role, backTo},
     },
 }: RoomInvitePageProps) {
     const styles = useThemeStyles();
@@ -72,7 +72,7 @@ function RoomInvitePage({
 
     const defaultOptions = useMemo(() => {
         if (!areOptionsInitialized) {
-            return {recentReports: [], personalDetails: [], userToInvite: null, currentUserOption: null, categoryOptions: [], tagOptions: [], taxRatesOptions: []};
+            return {recentReports: [], personalDetails: [], userToInvite: null, currentUserOption: null, categoryOptions: []};
         }
 
         const inviteOptions = OptionsListUtils.getMemberInviteOptions(options.personalDetails, betas ?? [], '', excludedUsers);
@@ -96,8 +96,6 @@ function RoomInvitePage({
             recentReports: [],
             currentUserOption: null,
             categoryOptions: [],
-            tagOptions: [],
-            taxRatesOptions: [],
         };
     }, [areOptionsInitialized, betas, excludedUsers, options.personalDetails, selectedOptions]);
 
@@ -183,8 +181,8 @@ function RoomInvitePage({
         if (role === CONST.IOU.SHARE.ROLE.ACCOUNTANT) {
             return ROUTES.REPORT_WITH_ID.getRoute(reportID);
         }
-        return reportID && (isPolicyEmployee ? ROUTES.ROOM_MEMBERS.getRoute(reportID) : ROUTES.REPORT_WITH_ID_DETAILS.getRoute(reportID));
-    }, [isPolicyEmployee, reportID, role]);
+        return reportID && (isPolicyEmployee ? ROUTES.ROOM_MEMBERS.getRoute(reportID, backTo) : ROUTES.REPORT_WITH_ID_DETAILS.getRoute(reportID, backTo));
+    }, [isPolicyEmployee, reportID, role, backTo]);
     const reportName = useMemo(() => ReportUtils.getReportName(report), [report]);
     const inviteUsers = useCallback(() => {
         HttpUtils.cancelPendingRequests(READ_COMMANDS.SEARCH_FOR_REPORTS);

@@ -12,13 +12,14 @@ import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Account, Beta, Currency, Policy} from '@src/types/onyx';
+import mapOnyxCollectionItems from '@src/utils/mapOnyxCollectionItems';
 
 function testNullUndefined<T>(value: OnyxEntry<T>) {}
 function testNullUndefinedCollection<T>(value: OnyxCollection<T>) {}
 
 type PartialPolicy = Pick<Policy, 'id' | 'name'>;
 
-function SubRenderTest({policy}: {policy: UseOnyxResult<`policy_${string}`, Policy | undefined> | OnyxEntry<Policy>}) {
+function SubRenderTest({policy}: {policy: UseOnyxResult<Policy | undefined> | OnyxEntry<Policy>}) {
     console.log('OnyxPlayground [App] SubRenderTest policy', policy);
     return null;
 }
@@ -137,11 +138,11 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     }>(inexistentCollectionValue);
 
     const inexistentCollectionWithSelector = useOnyx(ONYXKEYS.COLLECTION.INEXISTENT, {
-        selector: (entry) => {
+        selector: (collection) => {
             // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.INEXISTENT}' selector`, entry);
-            return entry?.id;
+            return mapOnyxCollectionItems(collection, (entry) => entry?.id);
         },
-        initialValue: 'initial value',
+        initialValue: {},
     });
     const [inexistentCollectionWithSelectorValue] = inexistentCollectionWithSelector;
 
@@ -181,12 +182,12 @@ function ComponentWithOnyxHook({policyID}: ComponentWithOnyxHookProps) {
     const [sessionEmailValue] = sessionEmail;
 
     const policiesWithSelector = useOnyx(ONYXKEYS.COLLECTION.POLICY, {
-        selector: (selectedPolicy) => {
+        selector: (collection) => {
             // console.log(`OnyxPlayground [App] ComponentWithOnyxHook '${ONYXKEYS.COLLECTION.POLICY}' selector`, selectedPolicy);
-            return {
-                id: selectedPolicy?.id,
-                name: selectedPolicy?.name,
-            };
+            return mapOnyxCollectionItems(collection, (entry) => ({
+                id: entry?.id,
+                name: entry?.name,
+            }));
         },
     });
     const [policiesWithSelectorValue] = policiesWithSelector;

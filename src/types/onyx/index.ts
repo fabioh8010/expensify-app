@@ -1,3 +1,4 @@
+import type {OnboardingPurpose} from '@src/CONST';
 import type Account from './Account';
 import type AccountData from './AccountData';
 import type {ApprovalWorkflowOnyx} from './ApprovalWorkflow';
@@ -12,7 +13,8 @@ import type CancellationDetails from './CancellationDetails';
 import type Card from './Card';
 import type {CardList, IssueNewCard, WorkspaceCardsList} from './Card';
 import type CardFeeds from './CardFeeds';
-import type {AddNewCompanyCardFeed} from './CardFeeds';
+import type {AddNewCompanyCardFeed, CompanyCardFeed} from './CardFeeds';
+import type CardOnWaitlist from './CardOnWaitlist';
 import type {CapturedLogs, Log} from './Console';
 import type Credentials from './Credentials';
 import type Currency from './Currency';
@@ -39,6 +41,7 @@ import type MobileSelectionMode from './MobileSelectionMode';
 import type Modal from './Modal';
 import type Network from './Network';
 import type NewGroupChatDraft from './NewGroupChatDraft';
+import type Onboarding from './Onboarding';
 import type OnyxInputOrEntry from './OnyxInputOrEntry';
 import type {OnyxUpdateEvent, OnyxUpdatesFromServer} from './OnyxUpdatesFromServer';
 import type {DecisionName, OriginalMessageIOU} from './OriginalMessage';
@@ -64,6 +67,7 @@ import type QuickAction from './QuickAction';
 import type RecentlyUsedCategories from './RecentlyUsedCategories';
 import type RecentlyUsedReportFields from './RecentlyUsedReportFields';
 import type RecentlyUsedTags from './RecentlyUsedTags';
+import type {RecentSearchItem} from './RecentSearch';
 import type RecentWaypoint from './RecentWaypoint';
 import type ReimbursementAccount from './ReimbursementAccount';
 import type Report from './Report';
@@ -118,6 +122,7 @@ export type {
     BlockedFromConcierge,
     Card,
     CardList,
+    CardOnWaitlist,
     Credentials,
     Currency,
     CurrencyList,
@@ -133,6 +138,7 @@ export type {
     IOU,
     IssueNewCard,
     AddNewCompanyCardFeed,
+    CompanyCardFeed,
     LastExportMethod,
     Locale,
     Login,
@@ -230,6 +236,9 @@ export type {
     WorkspaceTooltip,
     CardFeeds,
     SaveSearch,
+    RecentSearchItem,
     ImportedSpreadsheet,
+    Onboarding,
+    OnboardingPurpose,
     ValidateMagicCodeAction,
 };

@@ -1,4 +1,5 @@
 import {Str} from 'expensify-common';
+import lodashSortBy from 'lodash/sortBy';
 import Onyx from 'react-native-onyx';
 import type {OnyxEntry} from 'react-native-onyx';
 import * as Emojis from '@assets/emojis';
@@ -22,6 +23,8 @@ type EmojiTrieModule = {default: typeof EmojiTrie};
 const findEmojiByName = (name: string): Emoji => Emojis.emojiNameTable[name];
 
 const findEmojiByCode = (code: string): Emoji => Emojis.emojiCodeTableWithSkinTones[code];
+
+const sortByName = (emoji: Emoji, emojiData: RegExpMatchArray) => !emoji.name.includes(emojiData[0].toLowerCase().slice(1));
 
 let frequentlyUsedEmojis: FrequentlyUsedEmoji[] = [];
 Onyx.connect({
@@ -267,7 +270,7 @@ const getEmojiCodeWithSkinColor = (item: Emoji, preferredSkinToneIndex: OnyxEntr
     const {code, types} = item;
 
     if (typeof preferredSkinToneIndex === 'number' && types?.[preferredSkinToneIndex]) {
-        return types[preferredSkinToneIndex];
+        return types.at(preferredSkinToneIndex) ?? '';
     }
 
     return code;
@@ -424,7 +427,7 @@ function suggestEmojis(text: string, lang: Locale, limit: number = CONST.AUTO_CO
     for (const node of nodes) {
         if (node.metaData?.code && !matching.find((obj) => obj.name === node.name)) {
             if (matching.length === limit) {
-                return matching;
+                return lodashSortBy(matching, (emoji) => sortByName(emoji, emojiData));
             }
             matching.push({code: node.metaData.code, name: node.name, types: node.metaData.types});
         }
@@ -434,7 +437,7 @@ function suggestEmojis(text: string, lang: Locale, limit: number = CONST.AUTO_CO
         }
         for (const suggestion of suggestions) {
             if (matching.length === limit) {
-                return matching;
+                return lodashSortBy(matching, (emoji) => sortByName(emoji, emojiData));
             }
 
             if (!matching.find((obj) => obj.name === suggestion.name)) {
@@ -442,7 +445,7 @@ function suggestEmojis(text: string, lang: Locale, limit: number = CONST.AUTO_CO
             }
         }
     }
-    return matching;
+    return lodashSortBy(matching, (emoji) => sortByName(emoji, emojiData));
 }
 
 /**
@@ -462,7 +465,7 @@ const getPreferredSkinToneIndex = (value: OnyxEntry<string | number>): number =>
  */
 const getPreferredEmojiCode = (emoji: Emoji, preferredSkinTone: OnyxEntry<string | number>): string => {
     if (emoji.types && typeof preferredSkinTone === 'number') {
-        const emojiCodeWithSkinTone = emoji.types[preferredSkinTone];
+        const emojiCodeWithSkinTone = preferredSkinTone >= 0 ? emoji.types.at(preferredSkinTone) : undefined;
 
         // Note: it can happen that preferredSkinTone has a outdated format,
         // so it makes sense to check if we actually got a valid emoji code back
@@ -504,7 +507,16 @@ const enrichEmojiReactionWithTimestamps = (emoji: ReportActionReaction, emojiNam
     const usersWithTimestamps: UsersReactions = {};
     Object.entries(emoji.users ?? {}).forEach(([id, user]) => {
         const userTimestamps = Object.values(user?.skinTones ?? {});
-        const oldestUserTimestamp = userTimestamps.reduce((min, curr) => (curr < min ? curr : min), userTimestamps[0]);
+        const oldestUserTimestamp = userTimestamps.reduce((min, curr) => {
+            if (min) {
+                return curr < min ? curr : min;
+            }
+            return curr;
+        }, userTimestamps.at(0));
+
+        if (!oldestUserTimestamp) {
+            return;
+        }
 
         if (!oldestEmojiTimestamp || oldestUserTimestamp < oldestEmojiTimestamp) {
             oldestEmojiTimestamp = oldestUserTimestamp;
