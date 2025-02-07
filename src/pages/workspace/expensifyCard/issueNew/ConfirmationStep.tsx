@@ -1,22 +1,23 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {useOnyx} from 'react-native-onyx';
 import FormAlertWithSubmitButton from '@components/FormAlertWithSubmitButton';
-import HeaderWithBackButton from '@components/HeaderWithBackButton';
-import InteractiveStepSubHeader from '@components/InteractiveStepSubHeader';
+import InteractiveStepWrapper from '@components/InteractiveStepWrapper';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
-import ScreenWrapper from '@components/ScreenWrapper';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
+import ValidateCodeActionModal from '@components/ValidateCodeActionModal';
+import useBeforeRemove from '@hooks/useBeforeRemove';
 import useLocalize from '@hooks/useLocalize';
 import useNetwork from '@hooks/useNetwork';
 import useThemeStyles from '@hooks/useThemeStyles';
+import {clearIssueNewCardError, clearIssueNewCardFlow, issueExpensifyCard, setIssueNewCardStepAndData} from '@libs/actions/Card';
+import {requestValidateCodeAction, resetValidateActionCodeSent} from '@libs/actions/User';
 import {getTranslationKeyForLimitType} from '@libs/CardUtils';
-import * as CurrencyUtils from '@libs/CurrencyUtils';
-import * as ErrorUtils from '@libs/ErrorUtils';
-import * as PersonalDetailsUtils from '@libs/PersonalDetailsUtils';
+import {convertToShortDisplayString} from '@libs/CurrencyUtils';
+import {getLatestErrorMessage, getLatestErrorMessageField} from '@libs/ErrorUtils';
+import {getUserNameByEmail} from '@libs/PersonalDetailsUtils';
 import Navigation from '@navigation/Navigation';
-import * as Card from '@userActions/Card';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
@@ -25,7 +26,7 @@ import type {IssueNewCardStep} from '@src/types/onyx/Card';
 
 type ConfirmationStepProps = {
     /** ID of the policy that the card will be issued under */
-    policyID: string;
+    policyID: string | undefined;
 
     /** Route to navigate to */
     backTo?: Route;
@@ -35,59 +36,58 @@ function ConfirmationStep({policyID, backTo}: ConfirmationStepProps) {
     const {translate} = useLocalize();
     const styles = useThemeStyles();
     const {isOffline} = useNetwork();
-
-    const [issueNewCard] = useOnyx(ONYXKEYS.ISSUE_NEW_EXPENSIFY_CARD);
-
+    const [account] = useOnyx(ONYXKEYS.ACCOUNT);
+    const [issueNewCard] = useOnyx(`${ONYXKEYS.COLLECTION.ISSUE_NEW_EXPENSIFY_CARD}${policyID}`);
+    const [validateCodeAction] = useOnyx(ONYXKEYS.VALIDATE_ACTION_CODE);
+    const validateError = getLatestErrorMessageField(issueNewCard);
+    const [isValidateCodeActionModalVisible, setIsValidateCodeActionModalVisible] = useState(false);
     const data = issueNewCard?.data;
     const isSuccessful = issueNewCard?.isSuccessful;
+    const validateCodeSent = validateCodeAction?.validateCodeSent;
 
     const submitButton = useRef<View>(null);
 
+    useBeforeRemove(() => setIsValidateCodeActionModalVisible(false));
+
     useEffect(() => {
         submitButton.current?.focus();
+        resetValidateActionCodeSent();
     }, []);
 
     useEffect(() => {
         if (!isSuccessful) {
             return;
         }
-        Navigation.navigate(backTo ?? ROUTES.WORKSPACE_EXPENSIFY_CARD.getRoute(policyID ?? '-1'));
-        Card.clearIssueNewCardFlow();
+        Navigation.navigate(backTo ?? ROUTES.WORKSPACE_EXPENSIFY_CARD.getRoute(policyID));
+        clearIssueNewCardFlow(policyID);
     }, [backTo, policyID, isSuccessful]);
 
-    const submit = () => {
-        Card.issueExpensifyCard(policyID, CONST.COUNTRY.US, data);
+    const submit = (validateCode: string) => {
+        issueExpensifyCard(policyID, CONST.COUNTRY.US, validateCode, data);
     };
 
-    const errorMessage = ErrorUtils.getLatestErrorMessage(issueNewCard);
+    const errorMessage = getLatestErrorMessage(issueNewCard);
 
     const editStep = (step: IssueNewCardStep) => {
-        Card.setIssueNewCardStepAndData({step, isEditing: true});
+        setIssueNewCardStepAndData({step, isEditing: true, policyID});
     };
 
     const handleBackButtonPress = () => {
-        Card.setIssueNewCardStepAndData({step: CONST.EXPENSIFY_CARD.STEP.CARD_NAME});
+        setIssueNewCardStepAndData({step: CONST.EXPENSIFY_CARD.STEP.CARD_NAME, policyID});
     };
 
     const translationForLimitType = getTranslationKeyForLimitType(data?.limitType);
 
     return (
-        <ScreenWrapper
-            testID={ConfirmationStep.displayName}
-            includeSafeAreaPaddingBottom={false}
+        <InteractiveStepWrapper
+            wrapperID={ConfirmationStep.displayName}
             shouldEnablePickerAvoiding={false}
             shouldEnableMaxHeight
+            headerTitle={translate('workspace.card.issueCard')}
+            handleBackButtonPress={handleBackButtonPress}
+            startStepIndex={5}
+            stepNames={CONST.EXPENSIFY_CARD.STEP_NAMES}
         >
-            <HeaderWithBackButton
-                title={translate('workspace.card.issueCard')}
-                onBackButtonPress={handleBackButtonPress}
-            />
-            <View style={[styles.ph5, styles.mb5, styles.mt3, {height: CONST.BANK_ACCOUNT.STEPS_HEADER_HEIGHT}]}>
-                <InteractiveStepSubHeader
-                    startStepIndex={5}
-                    stepNames={CONST.EXPENSIFY_CARD.STEP_NAMES}
-                />
-            </View>
             <ScrollView
                 style={styles.pt0}
                 contentContainerStyle={styles.flexGrow1}
@@ -96,7 +96,7 @@ function ConfirmationStep({policyID, backTo}: ConfirmationStepProps) {
                 <Text style={[styles.textSupporting, styles.ph5, styles.mv3]}>{translate('workspace.card.issueNewCard.willBeReady')}</Text>
                 <MenuItemWithTopDescription
                     description={translate('workspace.card.issueNewCard.cardholder')}
-                    title={PersonalDetailsUtils.getUserNameByEmail(data?.assigneeEmail ?? '', 'displayName')}
+                    title={getUserNameByEmail(data?.assigneeEmail ?? '', 'displayName')}
                     shouldShowRightIcon
                     onPress={() => editStep(CONST.EXPENSIFY_CARD.STEP.ASSIGNEE)}
                 />
@@ -108,7 +108,7 @@ function ConfirmationStep({policyID, backTo}: ConfirmationStepProps) {
                 />
                 <MenuItemWithTopDescription
                     description={translate('workspace.card.issueNewCard.limit')}
-                    title={CurrencyUtils.convertToShortDisplayString(data?.limit)}
+                    title={convertToShortDisplayString(data?.limit)}
                     shouldShowRightIcon
                     onPress={() => editStep(CONST.EXPENSIFY_CARD.STEP.LIMIT)}
                 />
@@ -131,12 +131,26 @@ function ConfirmationStep({policyID, backTo}: ConfirmationStepProps) {
                         isAlertVisible={!!errorMessage}
                         isDisabled={isOffline}
                         isLoading={issueNewCard?.isLoading}
-                        onSubmit={submit}
+                        onSubmit={() => setIsValidateCodeActionModalVisible(true)}
                         buttonText={translate('workspace.card.issueCard')}
                     />
                 </View>
             </ScrollView>
-        </ScreenWrapper>
+            {!!issueNewCard && (
+                <ValidateCodeActionModal
+                    handleSubmitForm={submit}
+                    isLoading={issueNewCard?.isLoading}
+                    sendValidateCode={() => requestValidateCodeAction()}
+                    validateError={validateError}
+                    hasMagicCodeBeenSent={validateCodeSent}
+                    clearError={() => clearIssueNewCardError(policyID)}
+                    onClose={() => setIsValidateCodeActionModalVisible(false)}
+                    isVisible={isValidateCodeActionModalVisible}
+                    title={translate('cardPage.validateCardTitle')}
+                    descriptionPrimary={translate('cardPage.enterMagicCode', {contactMethod: account?.primaryLogin ?? ''})}
+                />
+            )}
+        </InteractiveStepWrapper>
     );
 }
 

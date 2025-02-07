@@ -1,14 +1,12 @@
 import type * as NativeNavigation from '@react-navigation/native';
 import {fireEvent, screen} from '@testing-library/react-native';
 import React, {useMemo} from 'react';
-import type {ComponentType} from 'react';
 import Onyx from 'react-native-onyx';
 import {measureRenders} from 'reassure';
 import {LocaleContextProvider} from '@components/LocaleContextProvider';
-import OptionListContextProvider, {OptionsListContext} from '@components/OptionListContextProvider';
+import {OptionsListContext} from '@components/OptionListContextProvider';
+import SearchAutocompleteInput from '@components/Search/SearchAutocompleteInput';
 import SearchRouter from '@components/Search/SearchRouter/SearchRouter';
-import {KeyboardStateProvider} from '@components/withKeyboardState';
-import type {WithNavigationFocusProps} from '@components/withNavigationFocus';
 import {createOptionList} from '@libs/OptionsListUtils';
 import ComposeProviders from '@src/components/ComposeProviders';
 import OnyxProvider from '@src/components/OnyxProvider';
@@ -52,6 +50,8 @@ jest.mock('@react-navigation/native', () => {
         useFocusEffect: jest.fn(),
         useIsFocused: () => true,
         useRoute: () => jest.fn(),
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        UNSTABLE_usePreventRemove: () => jest.fn(),
         useNavigation: () => ({
             navigate: jest.fn(),
             addListener: () => jest.fn(),
@@ -69,20 +69,9 @@ jest.mock('@react-navigation/native', () => {
     };
 });
 
-jest.mock('@src/components/withNavigationFocus', () => (Component: ComponentType<WithNavigationFocusProps>) => {
-    function WithNavigationFocus(props: WithNavigationFocusProps) {
-        return (
-            <Component
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...props}
-                isFocused={false}
-            />
-        );
-    }
-
-    WithNavigationFocus.displayName = 'WithNavigationFocus';
-
-    return WithNavigationFocus;
+jest.mock('@libs/runOnLiveMarkdownRuntime', () => {
+    const runOnLiveMarkdownRuntime = <Args extends unknown[], ReturnValue>(worklet: (...args: Args) => ReturnValue) => worklet;
+    return runOnLiveMarkdownRuntime;
 });
 
 const getMockedReports = (length = 100) =>
@@ -125,12 +114,16 @@ afterEach(() => {
 
 const mockOnClose = jest.fn();
 
-function SearchRouterWrapper() {
+function SearchAutocompleteInputWrapper() {
+    const [value, setValue] = React.useState('');
     return (
-        <ComposeProviders components={[OnyxProvider, LocaleContextProvider, KeyboardStateProvider]}>
-            <OptionListContextProvider>
-                <SearchRouter onRouterClose={mockOnClose} />
-            </OptionListContextProvider>
+        <ComposeProviders components={[OnyxProvider, LocaleContextProvider]}>
+            <SearchAutocompleteInput
+                value={value}
+                onSearchQueryChange={(searchTerm) => setValue(searchTerm)}
+                isFullWidth={false}
+                substitutionMap={CONST.EMPTY_OBJECT}
+            />
         </ComposeProviders>
     );
 }
@@ -138,14 +131,14 @@ function SearchRouterWrapper() {
 function SearchRouterWrapperWithCachedOptions() {
     return (
         <ComposeProviders components={[OnyxProvider, LocaleContextProvider]}>
-            <OptionsListContext.Provider value={useMemo(() => ({options: mockedOptions, initializeOptions: () => {}, areOptionsInitialized: true}), [])}>
+            <OptionsListContext.Provider value={useMemo(() => ({options: mockedOptions, initializeOptions: () => {}, resetOptions: () => {}, areOptionsInitialized: true}), [])}>
                 <SearchRouter onRouterClose={mockOnClose} />
             </OptionsListContext.Provider>
         </ComposeProviders>
     );
 }
 
-test('[SearchRouter] should render chat list with cached options', async () => {
+test('[SearchRouter] should render list with cached options', async () => {
     const scenario = async () => {
         await screen.findByTestId('SearchRouter');
     };
@@ -164,9 +157,7 @@ test('[SearchRouter] should render chat list with cached options', async () => {
 
 test('[SearchRouter] should react to text input changes', async () => {
     const scenario = async () => {
-        await screen.findByTestId('SearchRouter');
-
-        const input = screen.getByTestId('search-router-text-input');
+        const input = await screen.findByTestId('search-autocomplete-text-input');
         fireEvent.changeText(input, 'Email Four');
         fireEvent.changeText(input, 'Report');
         fireEvent.changeText(input, 'Email Five');
@@ -181,5 +172,5 @@ test('[SearchRouter] should react to text input changes', async () => {
                 [ONYXKEYS.IS_SEARCHING_FOR_REPORTS]: true,
             }),
         )
-        .then(() => measureRenders(<SearchRouterWrapper />, {scenario}));
+        .then(() => measureRenders(<SearchAutocompleteInputWrapper />, {scenario}));
 });

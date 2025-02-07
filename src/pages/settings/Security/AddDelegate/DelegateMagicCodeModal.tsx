@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useOnyx} from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import ValidateCodeActionModal from '@components/ValidateCodeActionModal';
@@ -14,56 +14,51 @@ import ROUTES from '@src/ROUTES';
 type DelegateMagicCodeModalProps = {
     login: string;
     role: ValueOf<typeof CONST.DELEGATE_ROLE>;
+    isValidateCodeActionModalVisible: boolean;
     onClose?: () => void;
+    shouldHandleNavigationBack?: boolean;
 };
 
-function DelegateMagicCodeModal({login, role, onClose}: DelegateMagicCodeModalProps) {
+function DelegateMagicCodeModal({login, role, onClose, isValidateCodeActionModalVisible, shouldHandleNavigationBack}: DelegateMagicCodeModalProps) {
     const {translate} = useLocalize();
     const [account] = useOnyx(ONYXKEYS.ACCOUNT);
-    const [isValidateCodeActionModalVisible, setIsValidateCodeActionModalVisible] = useState(true);
-
+    const [validateCodeAction] = useOnyx(ONYXKEYS.VALIDATE_ACTION_CODE);
     const currentDelegate = account?.delegatedAccess?.delegates?.find((d) => d.email === login);
-    const validateLoginError = ErrorUtils.getLatestErrorField(currentDelegate, 'addDelegate');
+    const addDelegateErrors = account?.delegatedAccess?.errorFields?.addDelegate?.[login];
+    const validateLoginError = ErrorUtils.getLatestError(addDelegateErrors);
 
     useEffect(() => {
-        if (!currentDelegate || !!currentDelegate.pendingFields?.email || !!currentDelegate.errorFields?.addDelegate) {
+        if (!currentDelegate || !!currentDelegate.pendingFields?.email || !!addDelegateErrors) {
             return;
         }
 
         // Dismiss modal on successful magic code verification
         Navigation.navigate(ROUTES.SETTINGS_SECURITY);
-    }, [login, currentDelegate, role]);
+    }, [login, currentDelegate, role, addDelegateErrors]);
 
     const onBackButtonPress = () => {
         onClose?.();
-        setIsValidateCodeActionModalVisible(false);
     };
 
     const clearError = () => {
         if (!validateLoginError) {
             return;
         }
-        Delegate.clearAddDelegateErrors(currentDelegate?.email ?? '', 'addDelegate');
-    };
-
-    const sendValidateCode = () => {
-        if (currentDelegate?.validateCodeSent) {
-            return;
-        }
-
-        User.requestValidateCodeAction();
+        Delegate.clearDelegateErrorsByField(currentDelegate?.email ?? '', 'addDelegate');
     };
 
     return (
         <ValidateCodeActionModal
+            shouldHandleNavigationBack={shouldHandleNavigationBack}
             clearError={clearError}
             onClose={onBackButtonPress}
             validateError={validateLoginError}
             isVisible={isValidateCodeActionModalVisible}
             title={translate('delegate.makeSureItIsYou')}
-            sendValidateCode={sendValidateCode}
+            sendValidateCode={() => User.requestValidateCodeAction()}
+            hasMagicCodeBeenSent={validateCodeAction?.validateCodeSent}
             handleSubmitForm={(validateCode) => Delegate.addDelegate(login, role, validateCode)}
-            description={translate('delegate.enterMagicCode', {contactMethod: account?.primaryLogin ?? ''})}
+            descriptionPrimary={translate('delegate.enterMagicCode', {contactMethod: account?.primaryLogin ?? ''})}
         />
     );
 }

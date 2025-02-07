@@ -33,7 +33,7 @@ function VideoPlayerThumbnail({thumbnailUrl, onPress, accessibilityLabel, isDele
 
     return (
         <View style={styles.flex1}>
-            {thumbnailUrl && (
+            {!!thumbnailUrl && (
                 <View style={[styles.flex1, {borderRadius: variables.componentBorderRadiusNormal}, styles.overflowHidden]}>
                     <Image
                         source={{uri: thumbnailUrl}}
@@ -57,7 +57,14 @@ function VideoPlayerThumbnail({thumbnailUrl, onPress, accessibilityLabel, isDele
                                 if (isDisabled) {
                                     return;
                                 }
-                                showContextMenuForReport(event, anchor, report?.reportID ?? '-1', action, checkIfContextMenuActive, ReportUtils.isArchivedRoom(report, reportNameValuePairs));
+                                showContextMenuForReport(
+                                    event,
+                                    anchor,
+                                    report?.reportID,
+                                    action,
+                                    checkIfContextMenuActive,
+                                    ReportUtils.isArchivedNonExpenseReport(report, reportNameValuePairs),
+                                );
                             }}
                             shouldUseHapticsOnLongPress
                         >

@@ -19,7 +19,7 @@ import waitForBatchedUpdates from '../utils/waitForBatchedUpdates';
 import waitForBatchedUpdatesWithAct from '../utils/waitForBatchedUpdatesWithAct';
 
 // We need a large timeout here as we are lazy loading React Navigation screens and this test is running against the entire mounted App
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 jest.mock('@react-navigation/native');
 jest.mock('../../src/libs/Notification/LocalNotification');
@@ -281,7 +281,7 @@ describe('Pagination', () => {
 
         expect(getReportActions()).toHaveLength(5);
         TestHelper.expectAPICommandToHaveBeenCalled('OpenReport', 1);
-        TestHelper.expectAPICommandToHaveBeenCalledWith('OpenReport', 0, {reportID: REPORT_ID, reportActionID: ''});
+        TestHelper.expectAPICommandToHaveBeenCalledWith('OpenReport', 0, {reportID: REPORT_ID});
         TestHelper.expectAPICommandToHaveBeenCalled('GetOlderActions', 0);
         TestHelper.expectAPICommandToHaveBeenCalled('GetNewerActions', 0);
 
@@ -305,7 +305,7 @@ describe('Pagination', () => {
 
         expect(getReportActions()).toHaveLength(CONST.REPORT.MIN_INITIAL_REPORT_ACTION_COUNT);
         TestHelper.expectAPICommandToHaveBeenCalled('OpenReport', 1);
-        TestHelper.expectAPICommandToHaveBeenCalledWith('OpenReport', 0, {reportID: REPORT_ID, reportActionID: ''});
+        TestHelper.expectAPICommandToHaveBeenCalledWith('OpenReport', 0, {reportID: REPORT_ID});
         TestHelper.expectAPICommandToHaveBeenCalled('GetOlderActions', 0);
         TestHelper.expectAPICommandToHaveBeenCalled('GetNewerActions', 0);
 
